@@ -925,7 +925,7 @@ function formatInput(el) {
   if (raw > 0) {
     const pos = el.selectionStart;
     const oldLen = el.value.length;
-    el.value = raw.toLocaleString();
+    el.value = '$' + raw.toLocaleString();
     const newLen = el.value.length;
     el.setSelectionRange(pos + (newLen - oldLen), pos + (newLen - oldLen));
   }
