@@ -226,7 +226,6 @@ function renderCards() {
     card.innerHTML = `
       <div class="card-header">
         <div class="lender-name">${l.name}${l._limited?'<span class="limited-badge">Limited Data</span>':''}</div>
-        <span class="channel-badge ${l.channel}">${l.channel}</span>
       </div>
       <div class="product-tag">${l.product}</div>
       <div class="cash-out-badge" id="cashout-${idx}">
