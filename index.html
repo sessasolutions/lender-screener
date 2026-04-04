@@ -155,20 +155,22 @@
   .calc-bar {
     background: var(--navy);
     color: var(--white);
-    padding: 10px 32px;
+    padding: 12px 32px;
     display: none;
     align-items: center;
-    gap: 24px;
+    justify-content: center;
+    gap: 32px;
     font-size: 13px;
   }
   .calc-bar.visible { display: flex; flex-wrap: wrap; }
   .calc-bar .calc-item {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 2px;
   }
   .calc-bar .calc-label {
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -176,11 +178,18 @@
   }
   .calc-bar .calc-value {
     font-family: var(--mono);
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 16px;
     color: var(--accent);
   }
   @media (max-width: 600px) {
-    .calc-bar { padding: 8px 16px; gap: 12px; font-size: 12px; }
+    .calc-bar {
+      padding: 12px 16px;
+      gap: 0;
+      justify-content: space-around;
+    }
+    .calc-bar .calc-item { flex: 1; }
+    .calc-bar .calc-value { font-size: 14px; }
   }
 
   /* Cash out badge on card */
