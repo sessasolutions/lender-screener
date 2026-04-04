@@ -37,13 +37,15 @@
   .filter-group input::placeholder { color: var(--gray-400); }
 
   /* Calc bar */
-  .calc-bar { background: var(--navy); color: var(--white); padding: 10px 32px; display: none; justify-content: center; gap: 32px; }
-  .calc-bar.visible { display: grid; grid-template-columns: repeat(3, auto); justify-content: center; gap: 4px 40px; }
+  .calc-bar { background: var(--navy); color: var(--white); padding: 10px 32px; display: none; flex-direction: column; align-items: center; gap: 6px; }
+  .calc-bar.visible { display: flex; }
+  .calc-row-top, .calc-row-bottom { display: flex; justify-content: center; gap: 40px; }
   .calc-bar .calc-item { display: flex; flex-direction: column; align-items: center; gap: 1px; }
   .calc-bar .calc-label { font-size: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-400); }
   .calc-bar .calc-value { font-family: var(--mono); font-weight: 600; font-size: 15px; color: var(--accent); }
   @media (max-width: 700px) {
-    .calc-bar.visible { padding: 10px 16px; gap: 2px 12px; grid-template-columns: repeat(3, 1fr); }
+    .calc-bar { padding: 8px 16px; gap: 4px; }
+    .calc-row-top, .calc-row-bottom { gap: 20px; }
     .calc-bar .calc-value { font-size: 12px; }
     .calc-bar .calc-label { font-size: 7px; }
   }
@@ -145,12 +147,15 @@
 </div>
 
 <div class="calc-bar" id="calc-bar">
-  <div class="calc-item"><span class="calc-label">1st LTV</span><span class="calc-value" id="calc-1st-ltv">--</span></div>
-  <div class="calc-item"><span class="calc-label">Equity</span><span class="calc-value" id="calc-equity">--</span></div>
-  <div class="calc-item"></div>
-  <div class="calc-item"><span class="calc-label">At 90% CLTV</span><span class="calc-value" id="calc-90">--</span></div>
-  <div class="calc-item"><span class="calc-label">At 85% CLTV</span><span class="calc-value" id="calc-85">--</span></div>
-  <div class="calc-item"><span class="calc-label">At 80% CLTV</span><span class="calc-value" id="calc-80">--</span></div>
+  <div class="calc-row-top">
+    <div class="calc-item"><span class="calc-label">1st LTV</span><span class="calc-value" id="calc-1st-ltv">--</span></div>
+    <div class="calc-item"><span class="calc-label">Equity</span><span class="calc-value" id="calc-equity">--</span></div>
+  </div>
+  <div class="calc-row-bottom">
+    <div class="calc-item"><span class="calc-label">At 90% CLTV</span><span class="calc-value" id="calc-90">--</span></div>
+    <div class="calc-item"><span class="calc-label">At 85% CLTV</span><span class="calc-value" id="calc-85">--</span></div>
+    <div class="calc-item"><span class="calc-label">At 80% CLTV</span><span class="calc-value" id="calc-80">--</span></div>
+  </div>
 </div>
 
 <div class="results-bar">
