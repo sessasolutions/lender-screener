@@ -151,6 +151,72 @@
   }
   .reset-btn:hover { border-color: var(--accent); color: var(--accent); }
 
+  /* Calculated CLTV bar */
+  .calc-bar {
+    background: var(--navy);
+    color: var(--white);
+    padding: 10px 32px;
+    display: none;
+    align-items: center;
+    gap: 24px;
+    font-size: 13px;
+  }
+  .calc-bar.visible { display: flex; flex-wrap: wrap; }
+  .calc-bar .calc-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .calc-bar .calc-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--gray-400);
+  }
+  .calc-bar .calc-value {
+    font-family: var(--mono);
+    font-weight: 500;
+    color: var(--accent);
+  }
+  @media (max-width: 600px) {
+    .calc-bar { padding: 8px 16px; gap: 12px; font-size: 12px; }
+  }
+
+  /* Cash out badge on card */
+  .cash-out-badge {
+    display: none;
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    text-align: center;
+  }
+  .cash-out-badge.visible { display: block; }
+  .cash-out-badge.negative { background: #fef2f2; border-color: #fecaca; }
+  .cash-out-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--gray-500);
+  }
+  .cash-out-amount {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--green);
+    margin-top: 2px;
+  }
+  .cash-out-badge.negative .cash-out-amount { color: var(--red); }
+  .cash-out-cltv {
+    font-size: 11px;
+    color: var(--gray-500);
+    margin-top: 2px;
+    font-family: var(--mono);
+  }
+
   /* Lender Grid */
   .lender-grid {
     padding: 0 32px 32px;
@@ -312,24 +378,24 @@
 
 <div class="filter-bar">
   <div class="filter-group">
-    <label>Channel</label>
-    <select id="f-channel"><option value="">All Channels</option><option value="wholesale">Wholesale</option><option value="retail">Retail / Direct</option></select>
+    <label>Property Value</label>
+    <input type="number" id="f-propval" placeholder="e.g. 800000" step="5000">
   </div>
   <div class="filter-group">
-    <label>State</label>
-    <select id="f-state"><option value="">Any State</option></select>
+    <label>1st Mortgage Balance</label>
+    <input type="number" id="f-firstmtg" placeholder="e.g. 500000" step="5000">
   </div>
   <div class="filter-group">
     <label>FICO Score</label>
     <input type="number" id="f-fico" placeholder="e.g. 680" min="300" max="850">
   </div>
   <div class="filter-group">
-    <label>Loan Amount</label>
-    <input type="number" id="f-amount" placeholder="e.g. 250000" step="5000">
+    <label>State</label>
+    <select id="f-state"><option value="">Any State</option></select>
   </div>
   <div class="filter-group">
-    <label>CLTV Needed (%)</label>
-    <input type="number" id="f-cltv" placeholder="e.g. 85" min="1" max="100">
+    <label>Channel</label>
+    <select id="f-channel"><option value="">All Channels</option><option value="wholesale">Wholesale</option><option value="retail">Retail / Direct</option></select>
   </div>
   <div class="filter-group">
     <label>Doc Type</label>
@@ -343,6 +409,12 @@
     <label>Occupancy</label>
     <select id="f-occupancy"><option value="">Any Occupancy</option><option value="oo">Owner-Occupied</option><option value="second">2nd Home</option><option value="inv">Investment</option></select>
   </div>
+</div>
+
+<div class="calc-bar" id="calc-bar">
+  <div class="calc-item"><span class="calc-label">1st LTV:</span> <span class="calc-value" id="calc-1st-ltv">--</span></div>
+  <div class="calc-item"><span class="calc-label">Available Equity:</span> <span class="calc-value" id="calc-equity">--</span></div>
+  <div class="calc-item"><span class="calc-label">Current Equity %:</span> <span class="calc-value" id="calc-equity-pct">--</span></div>
 </div>
 
 <div class="results-bar">
@@ -846,7 +918,7 @@ US_STATES.forEach(s => {
 function fmt(n) {
   if (n == null) return null;
   if (n >= 1000000) return '$' + (n/1000000).toFixed(1) + 'M';
-  if (n >= 1000) return '$' + (n/1000).toFixed(0) + 'K';
+  if (n >= 1000) return '$' + Math.round(n).toLocaleString();
   return '$' + n;
 }
 
@@ -876,6 +948,11 @@ function renderCards() {
         <span class="channel-badge ${l.channel}">${l.channel}</span>
       </div>
       <div class="product-tag">${l.product}</div>
+      <div class="cash-out-badge" id="cashout-${idx}">
+        <div class="cash-out-label">Max Cash Out Available</div>
+        <div class="cash-out-amount" id="cashout-amt-${idx}">--</div>
+        <div class="cash-out-cltv" id="cashout-cltv-${idx}"></div>
+      </div>
       <div class="card-grid">
         <div class="card-field">
           <span class="label">Max CLTV</span>
@@ -926,42 +1003,53 @@ function toggleExpand(btn) {
   btn.textContent = card.classList.contains('expanded') ? 'Hide Details' : 'Show Details';
 }
 
+function updateCalcBar(propVal, firstMtg) {
+  const bar = document.getElementById('calc-bar');
+  if (propVal && firstMtg !== null) {
+    const firstLtv = ((firstMtg / propVal) * 100).toFixed(1);
+    const equity = propVal - firstMtg;
+    const equityPct = ((equity / propVal) * 100).toFixed(1);
+    document.getElementById('calc-1st-ltv').textContent = firstLtv + '%';
+    document.getElementById('calc-equity').textContent = fmt(equity);
+    document.getElementById('calc-equity-pct').textContent = equityPct + '%';
+    bar.classList.add('visible');
+  } else {
+    bar.classList.remove('visible');
+  }
+}
+
 function applyFilters() {
   const channel = document.getElementById('f-channel').value;
   const state = document.getElementById('f-state').value;
   const fico = parseInt(document.getElementById('f-fico').value) || null;
-  const amount = parseInt(document.getElementById('f-amount').value) || null;
-  const cltv = parseInt(document.getElementById('f-cltv').value) || null;
   const docType = document.getElementById('f-doctype').value;
   const purpose = document.getElementById('f-purpose').value;
   const occupancy = document.getElementById('f-occupancy').value;
+  const propVal = parseInt(document.getElementById('f-propval').value) || null;
+  const firstMtg = parseInt(document.getElementById('f-firstmtg').value) || 0;
+  const hasPropData = propVal && propVal > 0;
+
+  // Update the calculated bar
+  updateCalcBar(propVal, hasPropData ? firstMtg : null);
 
   const cards = document.querySelectorAll('.lender-card');
   let count = 0;
 
   cards.forEach(card => {
-    const l = LENDERS[parseInt(card.dataset.idx)];
+    const idx = parseInt(card.dataset.idx);
+    const l = LENDERS[idx];
     let show = true;
-    let reasons = [];
 
     // Channel
     if (channel && l.channel !== channel) { show = false; }
 
-    // State - check excluded states
+    // State
     if (state && show) {
-      if (l.excluded_states.includes(state)) {
-        show = false;
-        reasons.push('State excluded');
-      }
-      // Whitelist check (FundLoans only operates in specific states)
-      if (l.fund_states_whitelist && !l.fund_states_whitelist.includes(state)) {
-        show = false;
-        reasons.push('State not in service area');
-      }
-      // Show conditional warnings
-      const exclTag = document.getElementById('excl-' + card.dataset.idx);
+      if (l.excluded_states.includes(state)) { show = false; }
+      if (l.fund_states_whitelist && !l.fund_states_whitelist.includes(state)) { show = false; }
+      const exclTag = document.getElementById('excl-' + idx);
       if (l.excluded_states_conditional && l.excluded_states_conditional[state]) {
-        exclTag.textContent = '⚠ ' + state + ': ' + l.excluded_states_conditional[state];
+        exclTag.textContent = '\u26A0 ' + state + ': ' + l.excluded_states_conditional[state];
         exclTag.classList.add('visible');
       } else {
         exclTag.classList.remove('visible');
@@ -971,18 +1059,6 @@ function applyFilters() {
     // FICO
     if (fico && show) {
       if (l.min_fico && fico < l.min_fico) { show = false; }
-    }
-
-    // Loan Amount
-    if (amount && show) {
-      if (l.loan_min && amount < l.loan_min) { show = false; }
-      if (l.loan_max && amount > l.loan_max) { show = false; }
-    }
-
-    // CLTV
-    if (cltv && show) {
-      const maxCltv = getMaxCltv(l, docType);
-      if (maxCltv && cltv > maxCltv) { show = false; }
     }
 
     // Doc Type
@@ -1000,13 +1076,50 @@ function applyFilters() {
       if (!l.occupancy.includes(occupancy)) { show = false; }
     }
 
+    // Cash-out calculation
+    const cashBadge = document.getElementById('cashout-' + idx);
+    const cashAmt = document.getElementById('cashout-amt-' + idx);
+    const cashCltv = document.getElementById('cashout-cltv-' + idx);
+
+    if (hasPropData && show) {
+      const maxCltv = getMaxCltv(l, docType);
+      if (maxCltv) {
+        let maxLoan = (maxCltv / 100) * propVal - firstMtg;
+        // Cap by lender's max loan amount
+        if (l.loan_max && maxLoan > l.loan_max) maxLoan = l.loan_max;
+        // Floor by lender's min loan amount
+        const belowMin = l.loan_min && maxLoan < l.loan_min;
+
+        if (maxLoan <= 0 || belowMin) {
+          cashBadge.className = 'cash-out-badge visible negative';
+          cashAmt.textContent = maxLoan <= 0 ? 'No equity available' : 'Below ' + fmt(l.loan_min) + ' minimum';
+          cashCltv.textContent = maxCltv + '% max CLTV';
+          show = false; // Filter out - can't do the deal
+        } else {
+          cashBadge.className = 'cash-out-badge visible';
+          cashAmt.textContent = fmt(maxLoan);
+          const resultCltv = (((firstMtg + maxLoan) / propVal) * 100).toFixed(1);
+          cashCltv.textContent = resultCltv + '% CLTV at max | Loan range: ' + (l.loan_min ? fmt(l.loan_min) : '?') + ' - ' + (l.loan_max ? fmt(l.loan_max) : 'no cap');
+        }
+      } else {
+        cashBadge.className = 'cash-out-badge visible';
+        cashAmt.textContent = 'Check guidelines';
+        cashAmt.style.fontSize = '14px';
+        cashAmt.style.color = 'var(--yellow)';
+        cashCltv.textContent = 'Max CLTV not confirmed';
+      }
+    } else {
+      cashBadge.className = 'cash-out-badge';
+      cashAmt.style.fontSize = '';
+      cashAmt.style.color = '';
+    }
+
     card.classList.toggle('hidden', !show);
     if (show) count++;
   });
 
   document.getElementById('match-count').textContent = count;
 
-  // Show no-results message
   const existing = document.querySelector('.no-results');
   if (existing) existing.remove();
   if (count === 0) {
@@ -1021,12 +1134,13 @@ function resetFilters() {
   document.getElementById('f-channel').value = '';
   document.getElementById('f-state').value = '';
   document.getElementById('f-fico').value = '';
-  document.getElementById('f-amount').value = '';
-  document.getElementById('f-cltv').value = '';
+  document.getElementById('f-propval').value = '';
+  document.getElementById('f-firstmtg').value = '';
   document.getElementById('f-doctype').value = '';
   document.getElementById('f-purpose').value = '';
   document.getElementById('f-occupancy').value = '';
   document.querySelectorAll('.excluded-tag').forEach(t => t.classList.remove('visible'));
+  document.getElementById('calc-bar').classList.remove('visible');
   applyFilters();
 }
 
