@@ -23,11 +23,12 @@
   @media (max-width: 600px) { .header { flex-direction: column; align-items: flex-start; gap: 4px; padding: 14px 16px; } .header h1 { font-size: 17px; } }
 
   /* Primary filters */
-  .filter-bar { background: var(--white); padding: 14px 32px 8px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-  .filter-bar-secondary { background: var(--white); padding: 0 32px 14px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; position: sticky; top: 68px; z-index: 99; border-bottom: 1px solid var(--gray-200); }
+  .filters-wrapper { position: sticky; top: 0; z-index: 100; background: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-bottom: 1px solid var(--gray-200); }
+  .filter-bar { padding: 14px 32px 8px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .filter-bar-secondary { padding: 0 32px 14px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   @media (max-width: 700px) {
-    .filter-bar { grid-template-columns: 1fr 1fr; padding: 12px 16px 6px; top: 0; }
-    .filter-bar-secondary { grid-template-columns: 1fr 1fr; padding: 0 16px 12px; top: auto; position: static; }
+    .filter-bar { grid-template-columns: 1fr 1fr; padding: 12px 16px 6px; }
+    .filter-bar-secondary { grid-template-columns: 1fr 1fr; padding: 0 16px 12px; }
   }
   .filter-group { display: flex; flex-direction: column; gap: 3px; }
   .filter-group label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-500); }
@@ -124,6 +125,7 @@
   <div class="header-meta">April 2026 &middot; 18 Lenders &middot; Verify with lender scenario desks</div>
 </div>
 
+<div class="filters-wrapper">
 <div class="filter-bar">
   <div class="filter-group"><label>Property Value</label><input type="text" id="f-propval" placeholder="$800,000" inputmode="numeric"></div>
   <div class="filter-group"><label>1st Mortgage</label><input type="text" id="f-firstmtg" placeholder="$500,000" inputmode="numeric"></div>
@@ -136,6 +138,7 @@
   <div class="filter-group"><label>Occupancy</label><select id="f-occupancy"><option value="">Any</option><option value="oo">Owner-Occupied</option><option value="second">2nd Home</option><option value="inv">Investment</option></select></div>
   <div class="filter-group"><label>Doc Type</label><select id="f-doctype"><option value="">Any</option><option value="full">Full Doc</option><option value="bank_stmt">Bank Statement</option><option value="dscr">DSCR</option><option value="1099">1099</option><option value="asset">Asset Depletion</option></select></div>
   <div class="filter-group" style="grid-column:1/-1"><button class="btn-sm" onclick="shareURL()" style="width:100%;padding:8px">Share Search</button></div>
+</div>
 </div>
 
 <div class="calc-bar" id="calc-bar">
