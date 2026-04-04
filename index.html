@@ -24,7 +24,7 @@
 
   /* Primary filters */
   .filter-bar { background: var(--white); padding: 14px 32px 8px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-  .filter-bar-secondary { background: var(--white); padding: 0 32px 14px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; position: sticky; top: 68px; z-index: 99; border-bottom: 1px solid var(--gray-200); }
+  .filter-bar-secondary { background: var(--white); padding: 0 32px 14px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; position: sticky; top: 68px; z-index: 99; border-bottom: 1px solid var(--gray-200); }
   @media (max-width: 600px) {
     .filter-bar, .filter-bar-secondary { grid-template-columns: 1fr 1fr; padding-left: 16px; padding-right: 16px; }
     .filter-bar { top: 0; }
@@ -130,7 +130,6 @@
 <div class="filter-bar-secondary">
   <div class="filter-group"><label>Occupancy</label><select id="f-occupancy"><option value="">Any</option><option value="oo">Owner-Occupied</option><option value="second">2nd Home</option><option value="inv">Investment</option></select></div>
   <div class="filter-group"><label>Doc Type</label><select id="f-doctype"><option value="">Any</option><option value="full">Full Doc</option><option value="bank_stmt">Bank Statement</option><option value="dscr">DSCR</option><option value="1099">1099</option><option value="asset">Asset Depletion</option></select></div>
-  <div class="filter-group"><label>Channel</label><select id="f-channel"><option value="">All</option><option value="wholesale">Wholesale</option><option value="retail">Retail</option></select></div>
   <div class="filter-group"><label>Loan Purpose</label><select id="f-purpose"><option value="">Any</option><option value="cash_out">Cash-Out</option><option value="purchase">Purchase</option><option value="rt_refi">Rate/Term Refi</option></select></div>
   <div class="filter-group" style="justify-content:flex-end"><button class="btn-sm" onclick="shareURL()" style="margin-top:auto">Share Scenario</button></div>
 </div>
@@ -261,7 +260,7 @@ function updateCalcBar(pv, fm) {
 }
 
 function applyFilters() {
-  const channel=document.getElementById('f-channel').value, state=document.getElementById('f-state').value;
+  const state=document.getElementById('f-state').value;
   const fico=parseInt(document.getElementById('f-fico').value)||null;
   const docType=document.getElementById('f-doctype').value, purpose=document.getElementById('f-purpose').value;
   const occupancy=document.getElementById('f-occupancy').value, propType=document.getElementById('f-proptype').value;
@@ -280,7 +279,6 @@ function applyFilters() {
     let show=true, ghost=false, ghostReason='', cashout=0;
 
     if(hideLimited && l._limited) { show=false; }
-    if(channel && l.channel!==channel) show=false;
 
     // State
     if(state && show) {
@@ -382,7 +380,7 @@ function applyFilters() {
 // URL params
 function updateURL() {
   const params = new URLSearchParams();
-  const fields = {pv:'f-propval',mtg:'f-firstmtg',fico:'f-fico',st:'f-state',pt:'f-proptype',occ:'f-occupancy',doc:'f-doctype',ch:'f-channel',purp:'f-purpose'};
+  const fields = {pv:'f-propval',mtg:'f-firstmtg',fico:'f-fico',st:'f-state',pt:'f-proptype',occ:'f-occupancy',doc:'f-doctype',purp:'f-purpose'};
   for(const[k,id] of Object.entries(fields)) {
     const v = id.includes('propval')||id.includes('firstmtg') ? parseNum(document.getElementById(id).value) : document.getElementById(id).value;
     if(v) params.set(k, v);
@@ -392,7 +390,7 @@ function updateURL() {
 }
 function loadURL() {
   const p = new URLSearchParams(location.search);
-  const map = {pv:'f-propval',mtg:'f-firstmtg',fico:'f-fico',st:'f-state',pt:'f-proptype',occ:'f-occupancy',doc:'f-doctype',ch:'f-channel',purp:'f-purpose'};
+  const map = {pv:'f-propval',mtg:'f-firstmtg',fico:'f-fico',st:'f-state',pt:'f-proptype',occ:'f-occupancy',doc:'f-doctype',purp:'f-purpose'};
   for(const[k,id] of Object.entries(map)) {
     const v=p.get(k); if(!v) continue;
     const el=document.getElementById(id);
@@ -409,7 +407,7 @@ function shareURL() {
 
 function resetFilters() {
   ['f-propval','f-firstmtg','f-fico'].forEach(id=>document.getElementById(id).value='');
-  ['f-state','f-proptype','f-occupancy','f-doctype','f-channel','f-purpose'].forEach(id=>document.getElementById(id).value='');
+  ['f-state','f-proptype','f-occupancy','f-doctype','f-purpose'].forEach(id=>document.getElementById(id).value='');
   document.querySelectorAll('.excluded-tag').forEach(t=>t.classList.remove('visible'));
   document.getElementById('calc-bar').classList.remove('visible');
   hideLimited=false; document.getElementById('btn-hide-limited').classList.remove('active'); document.getElementById('btn-hide-limited').textContent='Hide Limited Data';
