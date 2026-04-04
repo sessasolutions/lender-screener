@@ -379,11 +379,11 @@
 <div class="filter-bar">
   <div class="filter-group">
     <label>Property Value</label>
-    <input type="number" id="f-propval" placeholder="e.g. 800000" step="5000">
+    <input type="text" id="f-propval" placeholder="e.g. 800,000" inputmode="numeric">
   </div>
   <div class="filter-group">
     <label>1st Mortgage Balance</label>
-    <input type="number" id="f-firstmtg" placeholder="e.g. 500000" step="5000">
+    <input type="text" id="f-firstmtg" placeholder="e.g. 500,000" inputmode="numeric">
   </div>
   <div class="filter-group">
     <label>FICO Score</label>
@@ -915,6 +915,24 @@ US_STATES.forEach(s => {
   stateSelect.appendChild(opt);
 });
 
+// Format money inputs with commas as user types
+function parseNum(str) {
+  if (!str) return 0;
+  return parseInt(String(str).replace(/[^0-9]/g, '')) || 0;
+}
+function formatInput(el) {
+  const raw = parseNum(el.value);
+  if (raw > 0) {
+    const pos = el.selectionStart;
+    const oldLen = el.value.length;
+    el.value = raw.toLocaleString();
+    const newLen = el.value.length;
+    el.setSelectionRange(pos + (newLen - oldLen), pos + (newLen - oldLen));
+  }
+}
+document.getElementById('f-propval').addEventListener('input', function() { formatInput(this); applyFilters(); });
+document.getElementById('f-firstmtg').addEventListener('input', function() { formatInput(this); applyFilters(); });
+
 function fmt(n) {
   if (n == null) return null;
   if (n >= 1000000) return '$' + (n/1000000).toFixed(1) + 'M';
@@ -1025,8 +1043,8 @@ function applyFilters() {
   const docType = document.getElementById('f-doctype').value;
   const purpose = document.getElementById('f-purpose').value;
   const occupancy = document.getElementById('f-occupancy').value;
-  const propVal = parseInt(document.getElementById('f-propval').value) || null;
-  const firstMtg = parseInt(document.getElementById('f-firstmtg').value) || 0;
+  const propVal = parseNum(document.getElementById('f-propval').value) || null;
+  const firstMtg = parseNum(document.getElementById('f-firstmtg').value) || 0;
   const hasPropData = propVal && propVal > 0;
 
   // Update the calculated bar
