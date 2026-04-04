@@ -6,1179 +6,424 @@
 <title>Non-QM 2nd Lien Screener</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --navy: #0f1a2e;
-    --navy-light: #1a2942;
-    --accent: #3b82f6;
-    --accent-hover: #2563eb;
-    --green: #10b981;
-    --yellow: #f59e0b;
-    --red: #ef4444;
-    --gray-50: #f8fafc;
-    --gray-100: #f1f5f9;
-    --gray-200: #e2e8f0;
-    --gray-300: #cbd5e1;
-    --gray-400: #94a3b8;
-    --gray-500: #64748b;
-    --gray-600: #475569;
-    --gray-700: #334155;
-    --gray-800: #1e293b;
-    --white: #ffffff;
-    --font: 'DM Sans', -apple-system, sans-serif;
-    --mono: 'JetBrains Mono', monospace;
+    --navy: #0f1a2e; --navy-light: #1a2942; --accent: #3b82f6; --green: #10b981;
+    --yellow: #f59e0b; --red: #ef4444; --gray-50: #f8fafc; --gray-100: #f1f5f9;
+    --gray-200: #e2e8f0; --gray-300: #cbd5e1; --gray-400: #94a3b8; --gray-500: #64748b;
+    --gray-600: #475569; --gray-700: #334155; --gray-800: #1e293b; --white: #ffffff;
+    --font: 'DM Sans', -apple-system, sans-serif; --mono: 'JetBrains Mono', monospace;
   }
+  body { font-family: var(--font); background: var(--gray-100); color: var(--gray-800); min-height: 100vh; }
 
-  body {
-    font-family: var(--font);
-    background: var(--gray-100);
-    color: var(--gray-800);
-    min-height: 100vh;
-  }
-
-  /* Header */
-  .header {
-    background: var(--navy);
-    color: var(--white);
-    padding: 20px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .header h1 {
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: -0.3px;
-  }
+  .header { background: var(--navy); color: var(--white); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
+  .header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
   .header h1 span { color: var(--accent); }
-  .header-meta {
-    font-size: 12px;
-    color: var(--gray-400);
-    font-family: var(--mono);
-  }
-  @media (max-width: 600px) {
-    .header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 6px;
-      padding: 16px 16px;
-    }
-    .header h1 { font-size: 18px; }
-    .header-meta { font-size: 10px; }
-  }
+  .header-meta { font-size: 11px; color: var(--gray-400); font-family: var(--mono); }
+  @media (max-width: 600px) { .header { flex-direction: column; align-items: flex-start; gap: 4px; padding: 14px 16px; } .header h1 { font-size: 17px; } }
 
-  /* Filter Bar */
-  .filter-bar {
-    background: var(--white);
-    border-bottom: 1px solid var(--gray-200);
-    padding: 16px 32px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  }
+  /* Primary filters */
+  .filter-bar { background: var(--white); padding: 14px 32px 8px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .filter-bar-secondary { background: var(--white); padding: 0 32px 14px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; position: sticky; top: 68px; z-index: 99; border-bottom: 1px solid var(--gray-200); }
   @media (max-width: 600px) {
-    .filter-bar {
-      grid-template-columns: 1fr 1fr;
-      padding: 12px 16px;
-      gap: 10px;
-    }
+    .filter-bar, .filter-bar-secondary { grid-template-columns: 1fr 1fr; padding-left: 16px; padding-right: 16px; }
+    .filter-bar { top: 0; }
+    .filter-bar-secondary { top: auto; position: static; }
   }
-  .filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .filter-group label {
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--gray-500);
-  }
-  .filter-group select,
-  .filter-group input {
-    font-family: var(--font);
-    font-size: 13px;
-    padding: 7px 10px;
-    border: 1px solid var(--gray-300);
-    border-radius: 6px;
-    background: var(--white);
-    color: var(--gray-800);
-    outline: none;
-    transition: border-color 0.15s;
-  }
-  .filter-group select:focus,
-  .filter-group input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px rgba(59,130,246,0.15);
-  }
+  .filter-group { display: flex; flex-direction: column; gap: 3px; }
+  .filter-group label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-500); }
+  .filter-group select, .filter-group input { font-family: var(--font); font-size: 13px; padding: 6px 8px; border: 1px solid var(--gray-300); border-radius: 6px; background: var(--white); color: var(--gray-800); outline: none; transition: border-color 0.15s; }
+  .filter-group select:focus, .filter-group input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(59,130,246,0.12); }
   .filter-group input::placeholder { color: var(--gray-400); }
 
-  /* Results bar */
-  .results-bar {
-    padding: 12px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .results-count {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--gray-600);
-  }
-  .results-count strong {
-    color: var(--accent);
-    font-family: var(--mono);
-    font-size: 16px;
-  }
-  .reset-btn {
-    font-family: var(--font);
-    font-size: 12px;
-    font-weight: 600;
-    padding: 6px 14px;
-    border: 1px solid var(--gray-300);
-    border-radius: 6px;
-    background: var(--white);
-    color: var(--gray-600);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .reset-btn:hover { border-color: var(--accent); color: var(--accent); }
-
-  /* Calculated CLTV bar */
-  .calc-bar {
-    background: var(--navy);
-    color: var(--white);
-    padding: 12px 32px;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    gap: 32px;
-    font-size: 13px;
-  }
+  /* Calc bar */
+  .calc-bar { background: var(--navy); color: var(--white); padding: 10px 32px; display: none; align-items: center; justify-content: center; gap: 32px; }
   .calc-bar.visible { display: flex; flex-wrap: wrap; }
-  .calc-bar .calc-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-  }
-  .calc-bar .calc-label {
-    font-size: 9px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--gray-400);
-  }
-  .calc-bar .calc-value {
-    font-family: var(--mono);
-    font-weight: 600;
-    font-size: 16px;
-    color: var(--accent);
-  }
-  @media (max-width: 600px) {
-    .calc-bar {
-      padding: 12px 16px;
-      gap: 0;
-      justify-content: space-around;
-    }
-    .calc-bar .calc-item { flex: 1; }
-    .calc-bar .calc-value { font-size: 14px; }
-  }
+  .calc-bar .calc-item { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+  .calc-bar .calc-label { font-size: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-400); }
+  .calc-bar .calc-value { font-family: var(--mono); font-weight: 600; font-size: 15px; color: var(--accent); }
+  @media (max-width: 600px) { .calc-bar { padding: 10px 16px; gap: 0; justify-content: space-around; } .calc-bar .calc-item { flex: 1; } .calc-bar .calc-value { font-size: 13px; } }
 
-  /* Cash out badge on card */
-  .cash-out-badge {
-    display: none;
-    margin-top: 12px;
-    padding: 10px 12px;
-    background: #f0fdf4;
-    border: 1px solid #bbf7d0;
-    border-radius: 8px;
-    text-align: center;
-  }
-  .cash-out-badge.visible { display: block; }
-  .cash-out-badge.negative { background: #fef2f2; border-color: #fecaca; }
-  .cash-out-label {
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--gray-500);
-  }
-  .cash-out-amount {
-    font-family: var(--mono);
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--green);
-    margin-top: 2px;
-  }
-  .cash-out-badge.negative .cash-out-amount { color: var(--red); }
-  .cash-out-cltv {
-    font-size: 11px;
-    color: var(--gray-500);
-    margin-top: 2px;
-    font-family: var(--mono);
-  }
+  /* Results bar */
+  .results-bar { padding: 10px 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .results-count { font-size: 13px; font-weight: 600; color: var(--gray-600); }
+  .results-count strong { color: var(--accent); font-family: var(--mono); font-size: 15px; }
+  .results-actions { display: flex; gap: 8px; align-items: center; }
+  .btn-sm { font-family: var(--font); font-size: 11px; font-weight: 600; padding: 5px 12px; border: 1px solid var(--gray-300); border-radius: 6px; background: var(--white); color: var(--gray-600); cursor: pointer; transition: all 0.15s; }
+  .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-sm.active { background: var(--navy); color: var(--white); border-color: var(--navy); }
+  @media (max-width: 600px) { .results-bar { padding: 10px 16px; } }
 
   /* Lender Grid */
-  .lender-grid {
-    padding: 0 32px 32px;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 14px;
-  }
-  @media (max-width: 600px) {
-    .results-bar { padding: 10px 16px; }
-    .lender-grid {
-      padding: 0 16px 16px;
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
-  }
+  .lender-grid { padding: 0 32px 32px; display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; }
+  @media (max-width: 600px) { .lender-grid { padding: 0 16px 16px; grid-template-columns: 1fr; gap: 10px; } }
 
-  /* Lender Card */
-  .lender-card {
-    background: var(--white);
-    border: 1px solid var(--gray-200);
-    border-radius: 10px;
-    padding: 18px;
-    transition: all 0.2s;
-    cursor: default;
-  }
-  .lender-card:hover {
-    border-color: var(--accent);
-    box-shadow: 0 2px 8px rgba(59,130,246,0.1);
-  }
+  /* Cards */
+  .lender-card { background: var(--white); border: 1px solid var(--gray-200); border-radius: 10px; padding: 16px; transition: all 0.2s; }
+  .lender-card:hover { border-color: var(--accent); box-shadow: 0 2px 8px rgba(59,130,246,0.08); }
   .lender-card.hidden { display: none; }
   .lender-card.has-warning { border-left: 3px solid var(--yellow); }
 
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 12px;
-  }
-  .lender-name {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--navy);
-    line-height: 1.2;
-  }
-  .channel-badge {
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 3px 8px;
-    border-radius: 4px;
-    white-space: nowrap;
-  }
+  /* Ghost card (near-miss) */
+  .lender-card.ghost { opacity: 0.45; border-style: dashed; border-color: var(--gray-300); }
+  .lender-card.ghost:hover { opacity: 0.7; }
+  .ghost-reason { font-size: 11px; font-weight: 600; color: var(--red); background: #fef2f2; padding: 4px 8px; border-radius: 4px; margin-top: 8px; display: inline-block; }
+
+  /* Limited data badge */
+  .limited-badge { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 2px 6px; border-radius: 3px; background: var(--gray-200); color: var(--gray-500); margin-left: 6px; vertical-align: middle; }
+
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .lender-name { font-size: 14px; font-weight: 700; color: var(--navy); line-height: 1.2; }
+  .channel-badge { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 2px 7px; border-radius: 4px; white-space: nowrap; }
   .channel-badge.wholesale { background: #dbeafe; color: #1e40af; }
   .channel-badge.retail { background: #fce7f3; color: #9d174d; }
+  .product-tag { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; background: var(--gray-100); color: var(--gray-600); margin-bottom: 8px; }
 
-  .product-tag {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 4px;
-    background: var(--gray-100);
-    color: var(--gray-600);
-    margin-bottom: 10px;
-  }
+  /* Cash out badge */
+  .cash-out-badge { display: none; margin-bottom: 10px; padding: 8px 10px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; text-align: center; }
+  .cash-out-badge.visible { display: block; }
+  .cash-out-badge.negative { background: #fef2f2; border-color: #fecaca; }
+  .cash-out-label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-500); }
+  .cash-out-amount { font-family: var(--mono); font-size: 22px; font-weight: 700; color: var(--green); margin-top: 1px; }
+  .cash-out-badge.negative .cash-out-amount { color: var(--red); font-size: 13px; }
+  .cash-out-sub { font-size: 10px; color: var(--gray-400); margin-top: 1px; font-family: var(--mono); }
 
-  .card-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px 16px;
-  }
-  .card-field {
-    display: flex;
-    flex-direction: column;
-  }
-  .card-field .label {
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-    color: var(--gray-400);
-  }
-  .card-field .value {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--gray-700);
-    font-family: var(--mono);
-  }
-  .card-field .value.check {
-    color: var(--yellow);
-    font-family: var(--font);
-    font-style: italic;
-    font-size: 12px;
-  }
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; }
+  .card-field { display: flex; flex-direction: column; }
+  .card-field .label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; color: var(--gray-400); }
+  .card-field .value { font-size: 12px; font-weight: 500; color: var(--gray-700); font-family: var(--mono); }
+  .card-field .value.check { color: var(--yellow); font-family: var(--font); font-style: italic; }
 
-  .card-details {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid var(--gray-100);
-    display: none;
-  }
+  .excluded-tag { font-size: 11px; color: var(--red); font-weight: 500; margin-top: 6px; padding: 3px 7px; background: #fef2f2; border-radius: 4px; display: none; }
+  .excluded-tag.visible { display: inline-block; }
+
+  .card-details { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--gray-100); display: none; }
   .lender-card.expanded .card-details { display: block; }
-  .card-details .detail-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 3px 0;
-    font-size: 12px;
-  }
+  .card-details .detail-row { display: flex; justify-content: space-between; padding: 2px 0; font-size: 11px; }
   .card-details .detail-row .dlabel { color: var(--gray-500); }
   .card-details .detail-row .dvalue { color: var(--gray-700); font-weight: 500; text-align: right; max-width: 60%; }
 
-  .expand-btn {
-    display: block;
-    width: 100%;
-    margin-top: 10px;
-    padding: 5px;
-    font-family: var(--font);
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--gray-400);
-    background: none;
-    border: 1px solid var(--gray-200);
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
+  .expand-btn { display: block; width: 100%; margin-top: 8px; padding: 4px; font-family: var(--font); font-size: 10px; font-weight: 600; color: var(--gray-400); background: none; border: 1px solid var(--gray-200); border-radius: 5px; cursor: pointer; transition: all 0.15s; }
   .expand-btn:hover { color: var(--accent); border-color: var(--accent); }
 
-  .excluded-tag {
-    font-size: 11px;
-    color: var(--red);
-    font-weight: 500;
-    margin-top: 8px;
-    padding: 4px 8px;
-    background: #fef2f2;
-    border-radius: 4px;
-    display: none;
-  }
-  .excluded-tag.visible { display: inline-block; }
-
-  /* No results */
-  .no-results {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--gray-400);
-  }
-  .no-results h3 { font-size: 18px; margin-bottom: 8px; color: var(--gray-500); }
-  .no-results p { font-size: 14px; }
+  .no-results { grid-column: 1 / -1; text-align: center; padding: 50px 20px; color: var(--gray-400); }
+  .no-results h3 { font-size: 16px; margin-bottom: 6px; color: var(--gray-500); }
+  .share-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--navy); color: var(--white); padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; z-index: 999; display: none; }
+  .share-toast.visible { display: block; animation: fadeout 2s 1s forwards; }
+  @keyframes fadeout { to { opacity: 0; } }
 </style>
 </head>
 <body>
 
 <div class="header">
   <h1>Non-QM 2nd Lien <span>Lender Screener</span></h1>
-  <div class="header-meta">Compiled April 2026 &middot; 18 Lenders &middot; Verify with lender scenario desks</div>
+  <div class="header-meta">April 2026 &middot; 18 Lenders &middot; Verify with lender scenario desks</div>
 </div>
 
 <div class="filter-bar">
-  <div class="filter-group">
-    <label>Property Value</label>
-    <input type="text" id="f-propval" placeholder="e.g. 800,000" inputmode="numeric">
-  </div>
-  <div class="filter-group">
-    <label>1st Mortgage Balance</label>
-    <input type="text" id="f-firstmtg" placeholder="e.g. 500,000" inputmode="numeric">
-  </div>
-  <div class="filter-group">
-    <label>FICO Score</label>
-    <input type="number" id="f-fico" placeholder="e.g. 680" min="300" max="850">
-  </div>
-  <div class="filter-group">
-    <label>State</label>
-    <select id="f-state"><option value="">Any State</option></select>
-  </div>
-  <div class="filter-group">
-    <label>Channel</label>
-    <select id="f-channel"><option value="">All Channels</option><option value="wholesale">Wholesale</option><option value="retail">Retail / Direct</option></select>
-  </div>
-  <div class="filter-group">
-    <label>Doc Type</label>
-    <select id="f-doctype"><option value="">Any Doc Type</option><option value="full">Full Doc</option><option value="bank_stmt">Bank Statement</option><option value="dscr">DSCR</option><option value="1099">1099</option><option value="asset">Asset Depletion</option></select>
-  </div>
-  <div class="filter-group">
-    <label>Loan Purpose</label>
-    <select id="f-purpose"><option value="">Any Purpose</option><option value="cash_out">Cash-Out</option><option value="purchase">Purchase</option><option value="rt_refi">Rate/Term Refi</option></select>
-  </div>
-  <div class="filter-group">
-    <label>Occupancy</label>
-    <select id="f-occupancy"><option value="">Any Occupancy</option><option value="oo">Owner-Occupied</option><option value="second">2nd Home</option><option value="inv">Investment</option></select>
-  </div>
+  <div class="filter-group"><label>Property Value</label><input type="text" id="f-propval" placeholder="$800,000" inputmode="numeric"></div>
+  <div class="filter-group"><label>1st Mortgage</label><input type="text" id="f-firstmtg" placeholder="$500,000" inputmode="numeric"></div>
+  <div class="filter-group"><label>FICO Score</label><input type="number" id="f-fico" placeholder="680" min="300" max="850"></div>
+  <div class="filter-group"><label>State</label><select id="f-state"><option value="">Any State</option></select></div>
+  <div class="filter-group"><label>Property Type</label><select id="f-proptype"><option value="">Any Type</option><option value="sfr">SFR</option><option value="condo_w">Condo (Warrantable)</option><option value="condo_nw">Condo (Non-Warrantable)</option><option value="2_4_unit">2-4 Unit</option><option value="pud">PUD</option><option value="condotel">Condotel</option><option value="mfg">Manufactured Home</option><option value="mixed">Mixed-Use</option></select></div>
+</div>
+<div class="filter-bar-secondary">
+  <div class="filter-group"><label>Occupancy</label><select id="f-occupancy"><option value="">Any</option><option value="oo">Owner-Occupied</option><option value="second">2nd Home</option><option value="inv">Investment</option></select></div>
+  <div class="filter-group"><label>Doc Type</label><select id="f-doctype"><option value="">Any</option><option value="full">Full Doc</option><option value="bank_stmt">Bank Statement</option><option value="dscr">DSCR</option><option value="1099">1099</option><option value="asset">Asset Depletion</option></select></div>
+  <div class="filter-group"><label>Channel</label><select id="f-channel"><option value="">All</option><option value="wholesale">Wholesale</option><option value="retail">Retail</option></select></div>
+  <div class="filter-group"><label>Loan Purpose</label><select id="f-purpose"><option value="">Any</option><option value="cash_out">Cash-Out</option><option value="purchase">Purchase</option><option value="rt_refi">Rate/Term Refi</option></select></div>
+  <div class="filter-group" style="justify-content:flex-end"><button class="btn-sm" onclick="shareURL()" style="margin-top:auto">Share Scenario</button></div>
 </div>
 
 <div class="calc-bar" id="calc-bar">
-  <div class="calc-item"><span class="calc-label">1st LTV:</span> <span class="calc-value" id="calc-1st-ltv">--</span></div>
-  <div class="calc-item"><span class="calc-label">Available Equity:</span> <span class="calc-value" id="calc-equity">--</span></div>
-  <div class="calc-item"><span class="calc-label">Current Equity %:</span> <span class="calc-value" id="calc-equity-pct">--</span></div>
+  <div class="calc-item"><span class="calc-label">1st LTV</span><span class="calc-value" id="calc-1st-ltv">--</span></div>
+  <div class="calc-item"><span class="calc-label">Equity</span><span class="calc-value" id="calc-equity">--</span></div>
+  <div class="calc-item"><span class="calc-label">At 90% CLTV</span><span class="calc-value" id="calc-90">--</span></div>
+  <div class="calc-item"><span class="calc-label">At 85% CLTV</span><span class="calc-value" id="calc-85">--</span></div>
+  <div class="calc-item"><span class="calc-label">At 80% CLTV</span><span class="calc-value" id="calc-80">--</span></div>
 </div>
 
 <div class="results-bar">
   <div class="results-count">Showing <strong id="match-count">18</strong> of 18 lenders</div>
-  <button class="reset-btn" onclick="resetFilters()">Reset Filters</button>
+  <div class="results-actions">
+    <button class="btn-sm" id="btn-hide-limited" onclick="toggleLimited()">Hide Limited Data</button>
+    <button class="btn-sm" onclick="resetFilters()">Reset</button>
+  </div>
 </div>
 
 <div class="lender-grid" id="lender-grid"></div>
+<div class="share-toast" id="share-toast">Link copied to clipboard</div>
 
 <script>
 const LENDERS = [
-  {
-    name: "Angel Oak Mortgage Solutions",
-    channel: "wholesale",
-    product: "CES + HELOC",
-    nmls: "1160240",
-    website: "https://angeloakms.com",
-    max_cltv_full: 90, max_cltv_bs: 90, max_cltv_dscr: 90,
-    loan_min: 100000, loan_max: 750000,
-    min_fico: 660, fico_note: "660 (CES) / 720 (HELOC)",
-    max_dti: "50%",
-    doc_types: ["full","bank_stmt","dscr"],
-    doc_note: "Full Doc, 12/24mo Bank Stmt, DSCR",
-    purposes: ["purchase","rt_refi","cash_out"],
-    purpose_note: "Purchase, R/T, Cash-Out",
-    occupancy: ["oo","second","inv"],
-    occ_note: "OO / 2nd Home / Investment",
-    excluded_states: ["TN"],
-    excluded_states_conditional: {"TX": "OO only excluded"},
-    state_note: "TX (OO excluded), TN",
-    citizenship: "US, Perm Res",
-    io: "HELOC only",
-    ppp: "Check guidelines",
-    properties: "SFR, Condo, 2-4 unit",
-    terms: "10/15/20/30yr fixed; HELOC 3/5yr draw",
-    guideline_url: "https://angeloakms.com/programs/closed-end-second-loans/"
-  },
-  {
-    name: "A&D Mortgage",
-    channel: "wholesale",
-    product: "CES",
-    nmls: "2339",
-    website: "https://www.admortgage.com",
-    max_cltv_full: 90, max_cltv_bs: 85, max_cltv_dscr: 85,
-    loan_min: 50000, loan_max: 2500000,
-    min_fico: 660, fico_note: "660 (OO) / 680 (Inv)",
-    max_dti: "50% (US) / 43% (FN)",
-    doc_types: ["full","bank_stmt","1099","asset"],
-    doc_note: "Full Doc, Personal/Biz Bank Stmt, 1099, Asset Util, WVOE",
-    purposes: ["purchase","rt_refi","cash_out"],
-    purpose_note: "Purchase, R/T, Cash-Out, Piggyback",
-    occupancy: ["oo","second","inv"],
-    occ_note: "OO / 2nd Home / Investment",
-    excluded_states: ["TN"],
-    excluded_states_conditional: {"TX": "OO excluded"},
-    state_note: "TX (OO excluded), TN, PR",
-    citizenship: "US, Perm Res, Non-Perm Res, Foreign Natl, ITIN",
-    io: "No",
-    ppp: "Prohibited OO/2nd; Inv 6mo-5yr",
-    properties: "SFR, Condo (W/NW), Condotel, 2-4 unit, PUD, STR, Mfg Home, Mixed-Use",
-    terms: "30yr fixed, 40/10 ARM",
-    guideline_url: null
-  },
-  {
-    name: "LoanStream Wholesale",
-    channel: "wholesale",
-    product: "CES",
-    nmls: null,
-    website: null,
-    max_cltv_full: 90, max_cltv_bs: 85, max_cltv_dscr: 90,
-    loan_min: 75000, loan_max: 750000,
-    min_fico: 660, fico_note: "660 (Core) / 680 (Select)",
-    max_dti: "50% (<=80 CLTV) / 45% (>80)",
-    doc_types: ["full","bank_stmt","dscr","1099"],
-    doc_note: "Full Doc, Bank Stmt, P&L+3mo BS, 1099, WVOE, DSCR, Asset Util",
-    purposes: ["purchase","rt_refi","cash_out"],
-    purpose_note: "Purchase, R/T, Cash-Out",
-    occupancy: ["oo","second","inv"],
-    occ_note: "OO / 2nd Home / Investment",
-    excluded_states: ["MI","NJ","NY","TN","TX","WV"],
-    excluded_states_conditional: {},
-    state_note: "MI, NJ, NY, TN, TX, WV",
-    citizenship: "US, Perm Res, Non-Perm Res, ITIN, DACA",
-    io: "No",
-    ppp: "Check guidelines",
-    properties: "SFR (700sf min), Condo (500sf), 2-4 unit, PUD, NW Condo",
-    terms: "Various fixed/ARM",
-    guideline_url: null
-  },
-  {
-    name: "Deephaven Mortgage",
-    channel: "wholesale",
-    product: "CES + HELOC",
-    nmls: null,
-    website: null,
-    max_cltv_full: 90, max_cltv_bs: 90, max_cltv_dscr: null,
-    loan_min: 50000, loan_max: 750000,
-    min_fico: 660, fico_note: "660 (OO/2nd) / 700 (Inv HELOC)",
-    max_dti: "50%",
-    doc_types: ["full","bank_stmt"],
-    doc_note: "Full Doc, 12mo Bank Stmt, 1yr P&L",
-    purposes: ["cash_out"],
-    purpose_note: "Cash-Out",
-    occupancy: ["oo","second","inv"],
-    occ_note: "OO / 2nd Home / Investment",
-    excluded_states: [],
-    excluded_states_conditional: {},
-    state_note: "Check guidelines",
-    citizenship: "US, Perm Res",
-    io: "HELOC: 5yr IO draw; CES: No",
-    ppp: "Check guidelines",
-    properties: "SFR, Condo, OO/2nd/Inv",
-    terms: "CES fixed; HELOC variable",
-    guideline_url: null
-  },
-  {
-    name: "FundLoans",
-    channel: "wholesale",
-    product: "CES",
-    nmls: null,
-    website: null,
-    max_cltv_full: 90, max_cltv_bs: 85, max_cltv_dscr: 85,
-    loan_min: 200000, loan_max: 1000000,
-    min_fico: 680, fico_note: "680",
-    max_dti: "Check guidelines",
-    doc_types: ["full","bank_stmt","dscr","1099"],
-    doc_note: "Full Doc, Bank Stmt 12/24, 1099, WVOE, P&L (CPA), DSCR, Asset Depl",
-    purposes: ["purchase","cash_out"],
-    purpose_note: "Cash-Out, Debt Consol, Piggyback Purchase",
-    occupancy: ["oo","second","inv"],
-    occ_note: "OO / 2nd Home / Investment",
-    excluded_states: [],
-    excluded_states_conditional: {},
-    state_note: "21 states only: AZ,CA,CO,CT,FL,GA,ID,IL,MD,MT,NV,NJ,NM,NC,OR,SC,TN,TX,UT,WA,WY",
-    fund_states_whitelist: ["AZ","CA","CO","CT","FL","GA","ID","IL","MD","MT","NV","NJ","NM","NC","OR","SC","TN","TX","UT","WA","WY"],
-    citizenship: "US, Perm Res, Non-Perm Res",
-    io: "Yes - 30yr term; Balloon 30/15, 40/15",
-    ppp: "DSCR: min 1yr where allowed",
-    properties: "SFR (600sf min), PUD, Townhome, 2-4 unit, Warr Condo, Rural (OO)",
-    terms: "30yr, 40/15 balloon, IO available",
-    guideline_url: null
-  },
-  {
-    name: "Nations Direct (NDM)",
-    channel: "wholesale",
-    product: "CES",
-    nmls: null,
-    website: null,
-    max_cltv_full: 90, max_cltv_bs: 85, max_cltv_dscr: null,
-    loan_min: 75000, loan_max: 850000,
-    min_fico: 660, fico_note: "660 (90% CLTV needs 740+, <=350K)",
-    max_dti: "50%",
-    doc_types: ["full","bank_stmt","dscr","1099","asset"],
-    doc_note: "Full Doc, Bank Stmt 12/24, 1099, DSCR, Asset Depl (supplemental)",
-    purposes: ["cash_out","purchase"],
-    purpose_note: "Cash-Out, Piggyback",
-    occupancy: ["oo","second","inv"],
-    occ_note: "OO / 2nd Home / Investment",
-    excluded_states: ["AK","DE","HI","IA","MS","ND","NE","NM","NY","SD","TN","TX","VT","WY"],
-    excluded_states_conditional: {},
-    state_note: "AK,DE,HI,IA,MS,ND,NE,NM,NY,SD,TN,TX,VT,WY + Baltimore MD, Philadelphia PA (inv)",
-    citizenship: "US, Perm Res, Non-Perm Res (primary only)",
-    io: "No",
-    ppp: "Min 1yr where state allows",
-    properties: "SFR, Condo, 2-4 unit, PUD, OO/2nd/Inv",
-    terms: "Various",
-    guideline_url: null
-  },
-  {
-    name: "Change Wholesale",
-    channel: "wholesale",
-    product: "CES",
-    nmls: null,
-    website: null,
-    max_cltv_full: 90, max_cltv_bs: 90, max_cltv_dscr: null,
-    loan_min: null, loan_max: 500000,
-    min_fico: 680, fico_note: "680",
-    max_dti: "Check guidelines",
-    doc_types: ["full","bank_stmt"],
-    doc_note: "Standard Doc, Bank Statement",
-    purposes: ["cash_out"],
-    purpose_note: "Cash-Out",
-    occupancy: ["oo","second","inv"],
-    occ_note: "OO / 2nd Home / Investment",
-    excluded_states: [],
-    excluded_states_conditional: {},
-    state_note: "Check guidelines",
-    citizenship: "Check guidelines",
-    io: "Check guidelines",
-    ppp: "Check guidelines",
-    properties: "OO, 2nd Home, Inv",
-    terms: "Check guidelines",
-    guideline_url: null
-  },
-  {
-    name: "Plaza Home Mortgage",
-    channel: "wholesale",
-    product: "CES",
-    nmls: null,
-    website: null,
-    max_cltv_full: 85, max_cltv_bs: 80, max_cltv_dscr: null,
-    loan_min: 50000, loan_max: 500000,
-    min_fico: 680, fico_note: "680",
-    max_dti: "45% (50% w/ Full Doc + 80% CLTV + 720 + 5K residual)",
-    doc_types: ["full","bank_stmt"],
-    doc_note: "Full Doc, Bank Statement 12/24",
-    purposes: ["cash_out"],
-    purpose_note: "Cash-Out only (all txns treated as cash-out)",
-    occupancy: ["oo","second"],
-    occ_note: "OO + 2nd Home ONLY (no investment)",
-    excluded_states: [],
-    excluded_states_conditional: {"TX": "Primary only w/ 50(a)(6)"},
-    state_note: "TX primary only w/ 50(a)(6) rules",
-    citizenship: "US, Perm Res, Inter Vivos Rev Trust",
-    io: "No",
-    ppp: "None (prohibited)",
-    properties: "1-unit SFR, PUD, Warrantable Condo",
-    terms: "Various fixed",
-    guideline_url: null
-  },
-  {
-    name: "NQM Funding",
-    channel: "wholesale",
-    product: "CES",
-    nmls: null,
-    website: null,
-    max_cltv_full: 85, max_cltv_bs: null, max_cltv_dscr: null,
-    loan_min: 125000, loan_max: 500000,
-    min_fico: 680, fico_note: "680",
-    max_dti: "Check guidelines",
-    doc_types: ["full","bank_stmt","dscr","1099"],
-    doc_note: "Full Doc, Bank Stmt, P&L, 1099, DSCR",
-    purposes: ["cash_out"],
-    purpose_note: "Check guidelines",
-    occupancy: ["oo","second","inv"],
-    occ_note: "Check guidelines",
-    excluded_states: [],
-    excluded_states_conditional: {},
-    state_note: "Check guidelines",
-    citizenship: "Check guidelines",
-    io: "Check guidelines",
-    ppp: "Check guidelines",
-    properties: "Check guidelines",
-    terms: "Check guidelines",
-    guideline_url: null
-  },
-  {
-    name: "ClearEdge Lending",
-    channel: "wholesale",
-    product: "CES",
-    nmls: null,
-    website: null,
-    max_cltv_full: null, max_cltv_bs: null, max_cltv_dscr: null,
-    loan_min: null, loan_max: 750000,
-    min_fico: 680, fico_note: "680",
-    max_dti: "Check guidelines",
-    doc_types: ["full","bank_stmt","dscr","1099"],
-    doc_note: "Full Doc, Bank Stmt 12/24, 1099, DSCR",
-    purposes: ["cash_out"],
-    purpose_note: "Check guidelines",
-    occupancy: ["oo","second","inv"],
-    occ_note: "Check guidelines",
-    excluded_states: [],
-    excluded_states_conditional: {},
-    state_note: "Check guidelines",
-    citizenship: "Check guidelines",
-    io: "Check guidelines",
-    ppp: "Check guidelines",
-    properties: "SFR, SFR w/ ADU, 2-4 unit, PUD, W + NW Condo",
-    terms: "Check guidelines",
-    guideline_url: null
-  },
-  {
-    name: "JET Advantage Mortgage",
-    channel: "wholesale",
-    product: "CES",
-    nmls: null,
-    website: null,
-    max_cltv_full: null, max_cltv_bs: 85, max_cltv_dscr: null,
-    loan_min: null, loan_max: null,
-    min_fico: null, fico_note: "Check guidelines",
-    max_dti: "Check guidelines",
-    doc_types: ["bank_stmt"],
-    doc_note: "Bank Statement",
-    purposes: ["cash_out"],
-    purpose_note: "Check guidelines",
-    occupancy: ["oo","second","inv"],
-    occ_note: "Check guidelines",
-    excluded_states: ["MI","NJ","NY","TN","TX","VT","WV"],
-    excluded_states_conditional: {},
-    state_note: "MI, NJ, NY, TN, TX, VT, WV",
-    citizenship: "Check guidelines",
-    io: "Check guidelines",
-    ppp: "Check guidelines",
-    properties: "Check guidelines",
-    terms: "Check guidelines",
-    guideline_url: null
-  },
-  {
-    name: "Forward Lending",
-    channel: "wholesale",
-    product: "CES",
-    nmls: null,
-    website: null,
-    max_cltv_full: 85, max_cltv_bs: 85, max_cltv_dscr: null,
-    loan_min: 100000, loan_max: 750000,
-    min_fico: 660, fico_note: "660",
-    max_dti: "Check guidelines",
-    doc_types: ["full","bank_stmt","dscr"],
-    doc_note: "Full Doc, Bank Stmt, DSCR",
-    purposes: ["cash_out"],
-    purpose_note: "Check guidelines",
-    occupancy: ["oo","second","inv"],
-    occ_note: "Check guidelines",
-    excluded_states: ["NY","TN","TX","VT","WV"],
-    excluded_states_conditional: {},
-    state_note: "NY, TN, TX, VT, WV (Prime adds MI, NJ)",
-    citizenship: "Check guidelines",
-    io: "Check guidelines",
-    ppp: "Check guidelines",
-    properties: "Check guidelines",
-    terms: "NQ and Prime programs",
-    guideline_url: null
-  },
-  {
-    name: "AAA Lendings",
-    channel: "wholesale",
-    product: "CES",
-    nmls: null,
-    website: null,
-    max_cltv_full: null, max_cltv_bs: null, max_cltv_dscr: null,
-    loan_min: null, loan_max: 500000,
-    min_fico: 700, fico_note: "700",
-    max_dti: "45%",
-    doc_types: ["full","bank_stmt"],
-    doc_note: "Check guidelines",
-    purposes: ["cash_out"],
-    purpose_note: "Check guidelines",
-    occupancy: ["oo"],
-    occ_note: "Primary only (standalone)",
-    excluded_states: [],
-    excluded_states_conditional: {},
-    state_note: "Check guidelines",
-    citizenship: "Check guidelines",
-    io: "Check guidelines",
-    ppp: "Check guidelines",
-    properties: "Primary only (standalone)",
-    terms: "Check guidelines",
-    guideline_url: null
-  },
-  {
-    name: "Verus Mortgage Capital",
-    channel: "wholesale",
-    product: "CES",
-    nmls: null,
-    website: null,
-    max_cltv_full: 90, max_cltv_bs: 90, max_cltv_dscr: null,
-    loan_min: null, loan_max: 500000,
-    min_fico: 680, fico_note: "680",
-    max_dti: "Check guidelines",
-    doc_types: ["full","bank_stmt"],
-    doc_note: "Standard Doc, 12/24mo Bank Stmt",
-    purposes: ["cash_out"],
-    purpose_note: "Check guidelines",
-    occupancy: ["oo","second","inv"],
-    occ_note: "OO / 2nd Home / Investment",
-    excluded_states: [],
-    excluded_states_conditional: {},
-    state_note: "Check guidelines",
-    citizenship: "Check guidelines",
-    io: "Check guidelines",
-    ppp: "Check guidelines",
-    properties: "OO, 2nd Home, Inv",
-    terms: "Check guidelines",
-    guideline_url: null
-  },
-  {
-    name: "Oaktree Funding",
-    channel: "wholesale",
-    product: "CES + HELOC",
-    nmls: null,
-    website: null,
-    max_cltv_full: 90, max_cltv_bs: 90, max_cltv_dscr: null,
-    loan_min: null, loan_max: 1000000,
-    min_fico: 660, fico_note: "~660",
-    max_dti: "Check guidelines",
-    doc_types: ["full","bank_stmt","1099"],
-    doc_note: "Full Doc, Bank Stmt, 1099, Tax Returns",
-    purposes: ["cash_out"],
-    purpose_note: "Check guidelines",
-    occupancy: ["oo","inv"],
-    occ_note: "OO / Investment",
-    excluded_states: [],
-    excluded_states_conditional: {},
-    state_note: "Check guidelines",
-    citizenship: "Check guidelines",
-    io: "Check guidelines",
-    ppp: "Check guidelines",
-    properties: "OO, Investment",
-    terms: "Up to 1M cash-out (2M exception)",
-    guideline_url: null
-  },
-  {
-    name: "Griffin Funding",
-    channel: "retail",
-    product: "HELOC + HELOAN",
-    nmls: null,
-    website: null,
-    max_cltv_full: 90, max_cltv_bs: 90, max_cltv_dscr: 80,
-    loan_min: null, loan_max: 1000000,
-    min_fico: 640, fico_note: "640 (OO) / 680 (Inv)",
-    max_dti: "50%",
-    doc_types: ["full","bank_stmt"],
-    doc_note: "Full Doc, 12mo Bank Stmt",
-    purposes: ["cash_out"],
-    purpose_note: "Cash-Out",
-    occupancy: ["oo","second","inv"],
-    occ_note: "OO / 2nd Home / Investment",
-    excluded_states: [],
-    excluded_states_conditional: {},
-    state_note: "Check guidelines",
-    citizenship: "US, Perm Res, Non-Perm Res, Foreign Natl",
-    io: "HELOC: Yes (10yr draw); HELOAN: No",
-    ppp: "Check guidelines",
-    properties: "SFR, Condo, 2-4 unit, OO/2nd/Inv",
-    terms: "HELOC 30yr (10 draw + 20 repay); HELOAN 30yr fixed",
-    guideline_url: null
-  },
-  {
-    name: "Truss Financial Group",
-    channel: "retail",
-    product: "HELOAN",
-    nmls: null,
-    website: null,
-    max_cltv_full: null, max_cltv_bs: null, max_cltv_dscr: null,
-    loan_min: 50000, loan_max: 1500000,
-    min_fico: 620, fico_note: "620",
-    max_dti: "Check guidelines",
-    doc_types: ["full","bank_stmt"],
-    doc_note: "Check guidelines",
-    purposes: ["cash_out"],
-    purpose_note: "Check guidelines",
-    occupancy: ["oo","second","inv"],
-    occ_note: "Check guidelines",
-    excluded_states: [],
-    excluded_states_conditional: {},
-    state_note: "Check guidelines",
-    citizenship: "Check guidelines",
-    io: "Check guidelines",
-    ppp: "Check guidelines",
-    properties: "Check guidelines",
-    terms: "Check guidelines",
-    guideline_url: null
-  },
-  {
-    name: "Better.com",
-    channel: "retail",
-    product: "HELOC",
-    nmls: null,
-    website: "https://better.com",
-    max_cltv_full: null, max_cltv_bs: null, max_cltv_dscr: null,
-    loan_min: null, loan_max: 400000,
-    min_fico: null, fico_note: "Check guidelines",
-    max_dti: "Check guidelines",
-    doc_types: ["full"],
-    doc_note: "Check guidelines",
-    purposes: ["cash_out"],
-    purpose_note: "Check guidelines",
-    occupancy: ["oo"],
-    occ_note: "Check guidelines",
-    excluded_states: [],
-    excluded_states_conditional: {},
-    state_note: "Check guidelines",
-    citizenship: "Check guidelines",
-    io: "Check guidelines",
-    ppp: "Check guidelines",
-    properties: "Check guidelines",
-    terms: "Variable rate HELOC",
-    guideline_url: null
-  }
+  { name:"Angel Oak Mortgage Solutions", channel:"wholesale", product:"CES + HELOC", max_cltv_full:90, max_cltv_bs:90, max_cltv_dscr:90, loan_min:100000, loan_max:750000, min_fico:660, fico_note:"660 (CES) / 720 (HELOC)", max_dti:"50%", doc_types:["full","bank_stmt","dscr"], doc_note:"Full Doc, 12/24mo Bank Stmt, DSCR", purposes:["purchase","rt_refi","cash_out"], purpose_note:"Purchase, R/T, Cash-Out", occupancy:["oo","second","inv"], occ_note:"OO / 2nd Home / Inv", excluded_states:["TN"], excluded_states_conditional:{"TX":"Cannot do owner-occupied"}, state_note:"TX (no OO), TN excluded", citizenship:"US, Perm Res", io:"HELOC only", ppp:"Check guidelines", property_types:["sfr","condo_w","2_4_unit"], properties:"SFR, Condo, 2-4 unit", terms:"10/15/20/30yr fixed; HELOC 3/5yr draw", guideline_url:"https://angeloakms.com/programs/closed-end-second-loans/" },
+  { name:"A&D Mortgage", channel:"wholesale", product:"CES", max_cltv_full:90, max_cltv_bs:85, max_cltv_dscr:85, loan_min:50000, loan_max:2500000, min_fico:660, fico_note:"660 (OO) / 680 (Inv)", max_dti:"50% (US) / 43% (FN)", doc_types:["full","bank_stmt","1099","asset"], doc_note:"Full Doc, Bank Stmt, 1099, Asset Util, WVOE", purposes:["purchase","rt_refi","cash_out"], purpose_note:"Purchase, R/T, Cash-Out, Piggyback", occupancy:["oo","second","inv"], occ_note:"OO / 2nd Home / Inv", excluded_states:["TN"], excluded_states_conditional:{"TX":"Cannot do owner-occupied"}, state_note:"TX (no OO), TN, PR", citizenship:"US, Perm Res, Non-Perm Res, Foreign Natl, ITIN", io:"No", ppp:"Prohibited OO/2nd; Inv 6mo-5yr", property_types:["sfr","condo_w","condo_nw","condotel","2_4_unit","pud","mfg","mixed"], properties:"SFR, Condo (W/NW), Condotel, 2-4 unit, PUD, STR, Mfg, Mixed-Use", terms:"30yr fixed, 40/10 ARM", guideline_url:null },
+  { name:"LoanStream Wholesale", channel:"wholesale", product:"CES", max_cltv_full:90, max_cltv_bs:85, max_cltv_dscr:90, loan_min:75000, loan_max:750000, min_fico:660, fico_note:"660 (Core) / 680 (Select)", max_dti:"50% (<=80 CLTV) / 45% (>80)", doc_types:["full","bank_stmt","dscr","1099"], doc_note:"Full Doc, Bank Stmt, DSCR, 1099, WVOE, Asset Util", purposes:["purchase","rt_refi","cash_out"], purpose_note:"Purchase, R/T, Cash-Out", occupancy:["oo","second","inv"], occ_note:"OO / 2nd Home / Inv", excluded_states:["MI","NJ","NY","TN","TX","WV"], excluded_states_conditional:{}, state_note:"MI, NJ, NY, TN, TX, WV", citizenship:"US, Perm Res, Non-Perm Res, ITIN, DACA", io:"No", ppp:"Check guidelines", property_types:["sfr","condo_w","condo_nw","2_4_unit","pud"], properties:"SFR, Condo (W/NW), 2-4 unit, PUD", terms:"Various fixed/ARM", guideline_url:null },
+  { name:"Deephaven Mortgage", channel:"wholesale", product:"CES + HELOC", max_cltv_full:90, max_cltv_bs:90, max_cltv_dscr:null, loan_min:50000, loan_max:750000, min_fico:660, fico_note:"660 (OO/2nd) / 700 (Inv HELOC)", max_dti:"50%", doc_types:["full","bank_stmt"], doc_note:"Full Doc, 12mo Bank Stmt, 1yr P&L", purposes:["cash_out"], purpose_note:"Cash-Out", occupancy:["oo","second","inv"], occ_note:"OO / 2nd Home / Inv", excluded_states:[], excluded_states_conditional:{}, state_note:"Check guidelines", citizenship:"US, Perm Res", io:"HELOC: 5yr IO draw; CES: No", ppp:"Check guidelines", property_types:["sfr","condo_w"], properties:"SFR, Condo", terms:"CES fixed; HELOC variable", guideline_url:null },
+  { name:"FundLoans", channel:"wholesale", product:"CES", max_cltv_full:90, max_cltv_bs:85, max_cltv_dscr:85, loan_min:200000, loan_max:1000000, min_fico:680, fico_note:"680", max_dti:"Check guidelines", doc_types:["full","bank_stmt","dscr","1099"], doc_note:"Full Doc, Bank Stmt, 1099, DSCR, P&L, Asset Depl", purposes:["purchase","cash_out"], purpose_note:"Cash-Out, Piggyback Purchase", occupancy:["oo","second","inv"], occ_note:"OO / 2nd Home / Inv", excluded_states:[], excluded_states_conditional:{}, state_note:"21 states only", fund_states_whitelist:["AZ","CA","CO","CT","FL","GA","ID","IL","MD","MT","NV","NJ","NM","NC","OR","SC","TN","TX","UT","WA","WY"], citizenship:"US, Perm Res, Non-Perm Res", io:"Yes - 30yr; Balloon avail", ppp:"DSCR: min 1yr", property_types:["sfr","pud","2_4_unit","condo_w"], properties:"SFR, PUD, 2-4 unit, Warr Condo, Rural (OO)", terms:"30yr, 40/15 balloon, IO", guideline_url:null },
+  { name:"Nations Direct (NDM)", channel:"wholesale", product:"CES", max_cltv_full:90, max_cltv_bs:85, max_cltv_dscr:null, loan_min:75000, loan_max:850000, min_fico:660, fico_note:"660 (90% needs 740+, <=350K)", max_dti:"50%", doc_types:["full","bank_stmt","dscr","1099","asset"], doc_note:"Full Doc, Bank Stmt, 1099, DSCR, Asset Depl", purposes:["cash_out","purchase"], purpose_note:"Cash-Out, Piggyback", occupancy:["oo","second","inv"], occ_note:"OO / 2nd Home / Inv", excluded_states:["AK","DE","HI","IA","MS","ND","NE","NM","NY","SD","TN","TX","VT","WY"], excluded_states_conditional:{}, state_note:"14 states excluded", citizenship:"US, Perm Res, Non-Perm Res", io:"No", ppp:"Min 1yr where allowed", property_types:["sfr","condo_w","2_4_unit","pud"], properties:"SFR, Condo, 2-4 unit, PUD", terms:"Various", guideline_url:null },
+  { name:"Change Wholesale", channel:"wholesale", product:"CES", max_cltv_full:90, max_cltv_bs:90, max_cltv_dscr:null, loan_min:null, loan_max:500000, min_fico:680, fico_note:"680", max_dti:"Check guidelines", doc_types:["full","bank_stmt"], doc_note:"Standard Doc, Bank Stmt", purposes:["cash_out"], purpose_note:"Cash-Out", occupancy:["oo","second","inv"], occ_note:"OO / 2nd Home / Inv", excluded_states:[], excluded_states_conditional:{}, state_note:"Check guidelines", citizenship:"Check guidelines", io:"Check guidelines", ppp:"Check guidelines", property_types:[], properties:"Check guidelines", terms:"Check guidelines", guideline_url:null },
+  { name:"Plaza Home Mortgage", channel:"wholesale", product:"CES", max_cltv_full:85, max_cltv_bs:80, max_cltv_dscr:null, loan_min:50000, loan_max:500000, min_fico:680, fico_note:"680", max_dti:"45% (50% w/ Full Doc+80%CLTV+720)", doc_types:["full","bank_stmt"], doc_note:"Full Doc, Bank Stmt 12/24", purposes:["cash_out"], purpose_note:"Cash-Out only", occupancy:["oo","second"], occ_note:"OO + 2nd Home ONLY", excluded_states:[], excluded_states_conditional:{"TX":"Primary only w/ 50(a)(6) rules"}, state_note:"TX restricted", citizenship:"US, Perm Res, Trust", io:"No", ppp:"None (prohibited)", property_types:["sfr","pud","condo_w"], properties:"SFR, PUD, Warr Condo", terms:"Fixed", guideline_url:null },
+  { name:"NQM Funding", channel:"wholesale", product:"CES", max_cltv_full:85, max_cltv_bs:null, max_cltv_dscr:null, loan_min:125000, loan_max:500000, min_fico:680, fico_note:"680", max_dti:"Check guidelines", doc_types:["full","bank_stmt","dscr","1099"], doc_note:"Full Doc, Bank Stmt, P&L, 1099, DSCR", purposes:["cash_out"], purpose_note:"Check guidelines", occupancy:["oo","second","inv"], occ_note:"Check guidelines", excluded_states:[], excluded_states_conditional:{}, state_note:"Check guidelines", citizenship:"Check guidelines", io:"Check guidelines", ppp:"Check guidelines", property_types:[], properties:"Check guidelines", terms:"Check guidelines", guideline_url:null },
+  { name:"ClearEdge Lending", channel:"wholesale", product:"CES", max_cltv_full:null, max_cltv_bs:null, max_cltv_dscr:null, loan_min:null, loan_max:750000, min_fico:680, fico_note:"680", max_dti:"Check guidelines", doc_types:["full","bank_stmt","dscr","1099"], doc_note:"Full Doc, Bank Stmt, 1099, DSCR", purposes:["cash_out"], purpose_note:"Check guidelines", occupancy:["oo","second","inv"], occ_note:"Check guidelines", excluded_states:[], excluded_states_conditional:{}, state_note:"Check guidelines", citizenship:"Check guidelines", io:"Check guidelines", ppp:"Check guidelines", property_types:["sfr","2_4_unit","pud","condo_w","condo_nw"], properties:"SFR, 2-4 unit, PUD, Condo (W/NW)", terms:"Check guidelines", guideline_url:null },
+  { name:"JET Advantage Mortgage", channel:"wholesale", product:"CES", max_cltv_full:null, max_cltv_bs:85, max_cltv_dscr:null, loan_min:null, loan_max:null, min_fico:null, fico_note:"Check guidelines", max_dti:"Check guidelines", doc_types:["bank_stmt"], doc_note:"Bank Statement", purposes:["cash_out"], purpose_note:"Check guidelines", occupancy:["oo","second","inv"], occ_note:"Check guidelines", excluded_states:["MI","NJ","NY","TN","TX","VT","WV"], excluded_states_conditional:{}, state_note:"MI,NJ,NY,TN,TX,VT,WV", citizenship:"Check guidelines", io:"Check guidelines", ppp:"Check guidelines", property_types:[], properties:"Check guidelines", terms:"Check guidelines", guideline_url:null },
+  { name:"Forward Lending", channel:"wholesale", product:"CES", max_cltv_full:85, max_cltv_bs:85, max_cltv_dscr:null, loan_min:100000, loan_max:750000, min_fico:660, fico_note:"660", max_dti:"Check guidelines", doc_types:["full","bank_stmt","dscr"], doc_note:"Full Doc, Bank Stmt, DSCR", purposes:["cash_out"], purpose_note:"Check guidelines", occupancy:["oo","second","inv"], occ_note:"Check guidelines", excluded_states:["NY","TN","TX","VT","WV"], excluded_states_conditional:{}, state_note:"NY,TN,TX,VT,WV", citizenship:"Check guidelines", io:"Check guidelines", ppp:"Check guidelines", property_types:[], properties:"Check guidelines", terms:"NQ and Prime programs", guideline_url:null },
+  { name:"AAA Lendings", channel:"wholesale", product:"CES", max_cltv_full:null, max_cltv_bs:null, max_cltv_dscr:null, loan_min:null, loan_max:500000, min_fico:700, fico_note:"700", max_dti:"45%", doc_types:["full","bank_stmt"], doc_note:"Check guidelines", purposes:["cash_out"], purpose_note:"Check guidelines", occupancy:["oo"], occ_note:"Primary only", excluded_states:[], excluded_states_conditional:{}, state_note:"Check guidelines", citizenship:"Check guidelines", io:"Check guidelines", ppp:"Check guidelines", property_types:["sfr"], properties:"Primary SFR only", terms:"Check guidelines", guideline_url:null },
+  { name:"Verus Mortgage Capital", channel:"wholesale", product:"CES", max_cltv_full:90, max_cltv_bs:90, max_cltv_dscr:null, loan_min:null, loan_max:500000, min_fico:680, fico_note:"680", max_dti:"Check guidelines", doc_types:["full","bank_stmt"], doc_note:"Standard Doc, 12/24mo Bank Stmt", purposes:["cash_out"], purpose_note:"Check guidelines", occupancy:["oo","second","inv"], occ_note:"OO / 2nd Home / Inv", excluded_states:[], excluded_states_conditional:{}, state_note:"Check guidelines", citizenship:"Check guidelines", io:"Check guidelines", ppp:"Check guidelines", property_types:[], properties:"Check guidelines", terms:"Check guidelines", guideline_url:null },
+  { name:"Oaktree Funding", channel:"wholesale", product:"CES + HELOC", max_cltv_full:90, max_cltv_bs:90, max_cltv_dscr:null, loan_min:null, loan_max:1000000, min_fico:660, fico_note:"~660", max_dti:"Check guidelines", doc_types:["full","bank_stmt","1099"], doc_note:"Full Doc, Bank Stmt, 1099", purposes:["cash_out"], purpose_note:"Check guidelines", occupancy:["oo","inv"], occ_note:"OO / Investment", excluded_states:[], excluded_states_conditional:{}, state_note:"Check guidelines", citizenship:"Check guidelines", io:"Check guidelines", ppp:"Check guidelines", property_types:["sfr"], properties:"SFR, Investment", terms:"Up to 1M (2M exception)", guideline_url:null },
+  { name:"Griffin Funding", channel:"retail", product:"HELOC + HELOAN", max_cltv_full:90, max_cltv_bs:90, max_cltv_dscr:80, loan_min:null, loan_max:1000000, min_fico:640, fico_note:"640 (OO) / 680 (Inv)", max_dti:"50%", doc_types:["full","bank_stmt"], doc_note:"Full Doc, 12mo Bank Stmt", purposes:["cash_out"], purpose_note:"Cash-Out", occupancy:["oo","second","inv"], occ_note:"OO / 2nd Home / Inv", excluded_states:[], excluded_states_conditional:{}, state_note:"Check guidelines", citizenship:"US, Perm Res, Non-Perm Res, Foreign Natl", io:"HELOC: 10yr IO draw; HELOAN: No", ppp:"Check guidelines", property_types:["sfr","condo_w","2_4_unit"], properties:"SFR, Condo, 2-4 unit", terms:"HELOC 30yr (10+20); HELOAN 30yr fixed", guideline_url:null },
+  { name:"Truss Financial Group", channel:"retail", product:"HELOAN", max_cltv_full:null, max_cltv_bs:null, max_cltv_dscr:null, loan_min:50000, loan_max:1500000, min_fico:620, fico_note:"620", max_dti:"Check guidelines", doc_types:["full","bank_stmt"], doc_note:"Check guidelines", purposes:["cash_out"], purpose_note:"Check guidelines", occupancy:["oo","second","inv"], occ_note:"Check guidelines", excluded_states:[], excluded_states_conditional:{}, state_note:"Check guidelines", citizenship:"Check guidelines", io:"Check guidelines", ppp:"Check guidelines", property_types:[], properties:"Check guidelines", terms:"Check guidelines", guideline_url:null },
+  { name:"Better.com", channel:"retail", product:"HELOC", max_cltv_full:null, max_cltv_bs:null, max_cltv_dscr:null, loan_min:null, loan_max:400000, min_fico:null, fico_note:"Check guidelines", max_dti:"Check guidelines", doc_types:["full"], doc_note:"Check guidelines", purposes:["cash_out"], purpose_note:"Check guidelines", occupancy:["oo"], occ_note:"Check guidelines", excluded_states:[], excluded_states_conditional:{}, state_note:"Check guidelines", citizenship:"Check guidelines", io:"Check guidelines", ppp:"Check guidelines", property_types:[], properties:"Check guidelines", terms:"Variable HELOC", guideline_url:null }
 ];
 
-// All US states for the dropdown
-const US_STATES = [
-  "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA",
-  "HI","ID","IL","IN","IA","KS","KY","LA","ME","MD",
-  "MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ",
-  "NM","NY","NC","ND","OH","OK","OR","PA","RI","SC",
-  "SD","TN","TX","UT","VT","VA","WA","WV","WI","WY","DC","PR"
-];
-
-// Populate state dropdown
-const stateSelect = document.getElementById('f-state');
-US_STATES.forEach(s => {
-  const opt = document.createElement('option');
-  opt.value = s;
-  opt.textContent = s;
-  stateSelect.appendChild(opt);
+// Compute data completeness score (0-1, higher = more complete)
+LENDERS.forEach(l => {
+  const checks = [l.max_cltv_full, l.max_cltv_bs, l.min_fico, l.loan_min, l.loan_max, l.max_dti, l.citizenship, l.io, l.ppp];
+  const filled = checks.filter(v => v !== null && v !== undefined && !String(v).includes('Check')).length;
+  l._completeness = filled / checks.length;
+  l._limited = l._completeness < 0.5;
 });
 
-// Format money inputs with commas as user types
-function parseNum(str) {
-  if (!str) return 0;
-  return parseInt(String(str).replace(/[^0-9]/g, '')) || 0;
-}
-function formatInput(el) {
-  const raw = parseNum(el.value);
-  if (raw > 0) {
-    const pos = el.selectionStart;
-    const oldLen = el.value.length;
-    el.value = '$' + raw.toLocaleString();
-    const newLen = el.value.length;
-    el.setSelectionRange(pos + (newLen - oldLen), pos + (newLen - oldLen));
-  }
-}
-document.getElementById('f-propval').addEventListener('input', function() { formatInput(this); applyFilters(); });
-document.getElementById('f-firstmtg').addEventListener('input', function() { formatInput(this); applyFilters(); });
+const US_STATES = ["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY","DC","PR"];
+const stateSelect = document.getElementById('f-state');
+US_STATES.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; stateSelect.appendChild(o); });
 
-function fmt(n) {
-  if (n == null) return null;
-  if (n >= 1000000) return '$' + (n/1000000).toFixed(1) + 'M';
-  if (n >= 1000) return '$' + Math.round(n).toLocaleString();
-  return '$' + n;
-}
+let hideLimited = false;
 
-function getMaxCltv(l, docType) {
-  if (docType === 'bank_stmt' && l.max_cltv_bs != null) return l.max_cltv_bs;
-  if (docType === 'dscr' && l.max_cltv_dscr != null) return l.max_cltv_dscr;
-  if (l.max_cltv_full != null) return l.max_cltv_full;
-  return Math.max(l.max_cltv_full || 0, l.max_cltv_bs || 0, l.max_cltv_dscr || 0) || null;
-}
+function parseNum(s) { return parseInt(String(s||'').replace(/[^0-9]/g,''))||0; }
+function formatInput(el) { const n=parseNum(el.value); if(n>0){const p=el.selectionStart,ol=el.value.length; el.value='$'+n.toLocaleString(); el.setSelectionRange(p+(el.value.length-ol),p+(el.value.length-ol));} }
+function fmt(n) { if(n==null)return null; if(n>=1000000)return '$'+(n/1000000).toFixed(1)+'M'; return '$'+Math.round(n).toLocaleString(); }
+function getMaxCltv(l,dt) { if(dt==='bank_stmt'&&l.max_cltv_bs!=null)return l.max_cltv_bs; if(dt==='dscr'&&l.max_cltv_dscr!=null)return l.max_cltv_dscr; return l.max_cltv_full || Math.max(l.max_cltv_full||0,l.max_cltv_bs||0,l.max_cltv_dscr||0)||null; }
+
+document.getElementById('f-propval').addEventListener('input', function(){formatInput(this);applyFilters();});
+document.getElementById('f-firstmtg').addEventListener('input', function(){formatInput(this);applyFilters();});
 
 function renderCards() {
   const grid = document.getElementById('lender-grid');
   grid.innerHTML = '';
-
-  LENDERS.forEach((l, idx) => {
-    const bestCltv = Math.max(l.max_cltv_full || 0, l.max_cltv_bs || 0, l.max_cltv_dscr || 0) || null;
-    const loanRange = (l.loan_min ? fmt(l.loan_min) : '?') + ' - ' + (l.loan_max ? fmt(l.loan_max) : '?');
-    const hasChecks = [l.max_dti, l.state_note, l.citizenship, l.ppp].some(v => v && v.includes('Check'));
-
+  LENDERS.forEach((l,idx) => {
+    const bestCltv = Math.max(l.max_cltv_full||0,l.max_cltv_bs||0,l.max_cltv_dscr||0)||null;
+    const loanRange = (l.loan_min?fmt(l.loan_min):'?')+' - '+(l.loan_max?fmt(l.loan_max):'?');
     const card = document.createElement('div');
-    card.className = 'lender-card' + (hasChecks ? ' has-warning' : '');
+    card.className = 'lender-card';
     card.dataset.idx = idx;
-
+    card.dataset.cashout = '0';
     card.innerHTML = `
       <div class="card-header">
-        <div class="lender-name">${l.name}</div>
+        <div class="lender-name">${l.name}${l._limited?'<span class="limited-badge">Limited Data</span>':''}</div>
         <span class="channel-badge ${l.channel}">${l.channel}</span>
       </div>
       <div class="product-tag">${l.product}</div>
       <div class="cash-out-badge" id="cashout-${idx}">
-        <div class="cash-out-label">Max Cash Out Available</div>
+        <div class="cash-out-label">Max Cash Out (before closing costs)</div>
         <div class="cash-out-amount" id="cashout-amt-${idx}">--</div>
-        <div class="cash-out-cltv" id="cashout-cltv-${idx}"></div>
+        <div class="cash-out-sub" id="cashout-sub-${idx}"></div>
       </div>
       <div class="card-grid">
-        <div class="card-field">
-          <span class="label">Max CLTV</span>
-          <span class="value">${bestCltv ? bestCltv + '%' : '<span class="check">Check</span>'}</span>
-        </div>
-        <div class="card-field">
-          <span class="label">Min FICO</span>
-          <span class="value">${l.min_fico || '<span class="check">Check</span>'}</span>
-        </div>
-        <div class="card-field">
-          <span class="label">Loan Range</span>
-          <span class="value">${loanRange}</span>
-        </div>
-        <div class="card-field">
-          <span class="label">Max DTI</span>
-          <span class="value${l.max_dti && l.max_dti.includes('Check') ? ' check' : ''}">${l.max_dti || '<span class="check">Check</span>'}</span>
-        </div>
-        <div class="card-field">
-          <span class="label">Doc Types</span>
-          <span class="value" style="font-family:var(--font);font-size:12px">${l.doc_note}</span>
-        </div>
-        <div class="card-field">
-          <span class="label">Occupancy</span>
-          <span class="value" style="font-family:var(--font);font-size:12px">${l.occ_note}</span>
-        </div>
+        <div class="card-field"><span class="label">Max CLTV</span><span class="value">${bestCltv?bestCltv+'%':'<span class="check">Check</span>'}</span></div>
+        <div class="card-field"><span class="label">Min FICO</span><span class="value">${l.min_fico||'<span class="check">Check</span>'}</span></div>
+        <div class="card-field"><span class="label">Loan Range</span><span class="value">${loanRange}</span></div>
+        <div class="card-field"><span class="label">Max DTI</span><span class="value${(l.max_dti||'').includes('Check')?' check':''}">${l.max_dti||'<span class="check">Check</span>'}</span></div>
+        <div class="card-field"><span class="label">Doc Types</span><span class="value" style="font-family:var(--font);font-size:11px">${l.doc_note}</span></div>
+        <div class="card-field"><span class="label">Occupancy</span><span class="value" style="font-family:var(--font);font-size:11px">${l.occ_note}</span></div>
       </div>
       <div class="excluded-tag" id="excl-${idx}"></div>
+      <div class="ghost-reason" id="ghost-${idx}" style="display:none"></div>
       <div class="card-details">
         <div class="detail-row"><span class="dlabel">FICO Detail</span><span class="dvalue">${l.fico_note}</span></div>
         <div class="detail-row"><span class="dlabel">Purposes</span><span class="dvalue">${l.purpose_note}</span></div>
-        <div class="detail-row"><span class="dlabel">Properties</span><span class="dvalue">${l.properties}</span></div>
+        <div class="detail-row"><span class="dlabel">Property Types</span><span class="dvalue">${l.properties}</span></div>
         <div class="detail-row"><span class="dlabel">Excluded States</span><span class="dvalue">${l.state_note}</span></div>
         <div class="detail-row"><span class="dlabel">Citizenship</span><span class="dvalue">${l.citizenship}</span></div>
         <div class="detail-row"><span class="dlabel">Interest-Only</span><span class="dvalue">${l.io}</span></div>
         <div class="detail-row"><span class="dlabel">PPP</span><span class="dvalue">${l.ppp}</span></div>
         <div class="detail-row"><span class="dlabel">Terms</span><span class="dvalue">${l.terms}</span></div>
-        ${l.guideline_url ? `<div class="detail-row"><span class="dlabel">Guidelines</span><span class="dvalue"><a href="${l.guideline_url}" target="_blank" style="color:var(--accent)">View</a></span></div>` : ''}
+        ${l.guideline_url?`<div class="detail-row"><span class="dlabel">Guidelines</span><span class="dvalue"><a href="${l.guideline_url}" target="_blank" style="color:var(--accent)">View</a></span></div>`:''}
       </div>
-      <button class="expand-btn" onclick="toggleExpand(this)">Show Details</button>
-    `;
+      <button class="expand-btn" onclick="toggleExpand(this)">Show Details</button>`;
     grid.appendChild(card);
   });
 }
 
-function toggleExpand(btn) {
-  const card = btn.closest('.lender-card');
-  card.classList.toggle('expanded');
-  btn.textContent = card.classList.contains('expanded') ? 'Hide Details' : 'Show Details';
-}
+function toggleExpand(btn) { const c=btn.closest('.lender-card'); c.classList.toggle('expanded'); btn.textContent=c.classList.contains('expanded')?'Hide Details':'Show Details'; }
+function toggleLimited() { hideLimited=!hideLimited; document.getElementById('btn-hide-limited').classList.toggle('active',hideLimited); document.getElementById('btn-hide-limited').textContent=hideLimited?'Show All':'Hide Limited Data'; applyFilters(); }
 
-function updateCalcBar(propVal, firstMtg) {
+function updateCalcBar(pv, fm) {
   const bar = document.getElementById('calc-bar');
-  if (propVal && firstMtg !== null) {
-    const firstLtv = ((firstMtg / propVal) * 100).toFixed(1);
-    const equity = propVal - firstMtg;
-    const equityPct = ((equity / propVal) * 100).toFixed(1);
-    document.getElementById('calc-1st-ltv').textContent = firstLtv + '%';
-    document.getElementById('calc-equity').textContent = fmt(equity);
-    document.getElementById('calc-equity-pct').textContent = equityPct + '%';
+  if (pv && pv > 0) {
+    document.getElementById('calc-1st-ltv').textContent = ((fm/pv)*100).toFixed(1)+'%';
+    document.getElementById('calc-equity').textContent = fmt(pv-fm);
+    document.getElementById('calc-90').textContent = fmt(Math.max(0, pv*0.9 - fm));
+    document.getElementById('calc-85').textContent = fmt(Math.max(0, pv*0.85 - fm));
+    document.getElementById('calc-80').textContent = fmt(Math.max(0, pv*0.8 - fm));
     bar.classList.add('visible');
-  } else {
-    bar.classList.remove('visible');
-  }
+  } else { bar.classList.remove('visible'); }
 }
 
 function applyFilters() {
-  const channel = document.getElementById('f-channel').value;
-  const state = document.getElementById('f-state').value;
-  const fico = parseInt(document.getElementById('f-fico').value) || null;
-  const docType = document.getElementById('f-doctype').value;
-  const purpose = document.getElementById('f-purpose').value;
-  const occupancy = document.getElementById('f-occupancy').value;
-  const propVal = parseNum(document.getElementById('f-propval').value) || null;
-  const firstMtg = parseNum(document.getElementById('f-firstmtg').value) || 0;
-  const hasPropData = propVal && propVal > 0;
+  const channel=document.getElementById('f-channel').value, state=document.getElementById('f-state').value;
+  const fico=parseInt(document.getElementById('f-fico').value)||null;
+  const docType=document.getElementById('f-doctype').value, purpose=document.getElementById('f-purpose').value;
+  const occupancy=document.getElementById('f-occupancy').value, propType=document.getElementById('f-proptype').value;
+  const propVal=parseNum(document.getElementById('f-propval').value)||null;
+  const firstMtg=parseNum(document.getElementById('f-firstmtg').value)||0;
+  const hasPV = propVal && propVal > 0;
 
-  // Update the calculated bar
-  updateCalcBar(propVal, hasPropData ? firstMtg : null);
+  updateCalcBar(propVal, hasPV ? firstMtg : null);
+  updateURL();
 
   const cards = document.querySelectorAll('.lender-card');
-  let count = 0;
+  let results = []; // {idx, show, ghost, ghostReason, cashout}
 
   cards.forEach(card => {
-    const idx = parseInt(card.dataset.idx);
-    const l = LENDERS[idx];
-    let show = true;
+    const idx=parseInt(card.dataset.idx), l=LENDERS[idx];
+    let show=true, ghost=false, ghostReason='', cashout=0;
 
-    // Channel
-    if (channel && l.channel !== channel) { show = false; }
+    if(hideLimited && l._limited) { show=false; }
+    if(channel && l.channel!==channel) show=false;
 
     // State
-    if (state && show) {
-      if (l.excluded_states.includes(state)) { show = false; }
-      if (l.fund_states_whitelist && !l.fund_states_whitelist.includes(state)) { show = false; }
-      const exclTag = document.getElementById('excl-' + idx);
-      if (l.excluded_states_conditional && l.excluded_states_conditional[state]) {
-        exclTag.textContent = '\u26A0 ' + state + ': ' + l.excluded_states_conditional[state];
-        exclTag.classList.add('visible');
-      } else {
-        exclTag.classList.remove('visible');
+    if(state && show) {
+      if(l.excluded_states.includes(state)) show=false;
+      if(l.fund_states_whitelist && !l.fund_states_whitelist.includes(state)) show=false;
+      const et=document.getElementById('excl-'+idx);
+      if(l.excluded_states_conditional && l.excluded_states_conditional[state]) { et.textContent='\u26A0 '+state+': '+l.excluded_states_conditional[state]; et.classList.add('visible'); } else { et.classList.remove('visible'); }
+    }
+
+    // FICO (with near-miss)
+    if(fico && show) {
+      if(l.min_fico && fico < l.min_fico) {
+        const gap = l.min_fico - fico;
+        if(gap <= 20) { ghost=true; ghostReason='FICO '+fico+' is '+gap+' pts below '+l.min_fico+' minimum'; }
+        else show=false;
       }
     }
 
-    // FICO
-    if (fico && show) {
-      if (l.min_fico && fico < l.min_fico) { show = false; }
-    }
-
-    // Doc Type
-    if (docType && show) {
-      if (!l.doc_types.includes(docType)) { show = false; }
-    }
-
+    // Doc type
+    if(docType && show && !ghost) { if(!l.doc_types.includes(docType)) show=false; }
     // Purpose
-    if (purpose && show) {
-      if (!l.purposes.includes(purpose)) { show = false; }
-    }
-
+    if(purpose && show && !ghost) { if(!l.purposes.includes(purpose)) show=false; }
     // Occupancy
-    if (occupancy && show) {
-      if (!l.occupancy.includes(occupancy)) { show = false; }
-    }
+    if(occupancy && show && !ghost) { if(!l.occupancy.includes(occupancy)) show=false; }
+    // Property type
+    if(propType && show && !ghost) { if(l.property_types.length > 0 && !l.property_types.includes(propType)) show=false; }
 
-    // Cash-out calculation
-    const cashBadge = document.getElementById('cashout-' + idx);
-    const cashAmt = document.getElementById('cashout-amt-' + idx);
-    const cashCltv = document.getElementById('cashout-cltv-' + idx);
-
-    if (hasPropData && show) {
-      const maxCltv = getMaxCltv(l, docType);
-      if (maxCltv) {
-        let maxLoan = (maxCltv / 100) * propVal - firstMtg;
-        // Cap by lender's max loan amount
-        if (l.loan_max && maxLoan > l.loan_max) maxLoan = l.loan_max;
-        // Floor by lender's min loan amount
+    // Cash out calc
+    if(hasPV && (show||ghost)) {
+      const maxCltv=getMaxCltv(l,docType);
+      const badge=document.getElementById('cashout-'+idx), amt=document.getElementById('cashout-amt-'+idx), sub=document.getElementById('cashout-sub-'+idx);
+      if(maxCltv) {
+        let maxLoan = (maxCltv/100)*propVal - firstMtg;
+        if(l.loan_max && maxLoan > l.loan_max) maxLoan=l.loan_max;
         const belowMin = l.loan_min && maxLoan < l.loan_min;
-
-        if (maxLoan <= 0 || belowMin) {
-          cashBadge.className = 'cash-out-badge visible negative';
-          cashAmt.textContent = maxLoan <= 0 ? 'No equity available' : 'Below ' + fmt(l.loan_min) + ' minimum';
-          cashCltv.textContent = maxCltv + '% max CLTV';
-          show = false; // Filter out - can't do the deal
+        if(maxLoan<=0) {
+          badge.className='cash-out-badge visible negative'; amt.textContent='No equity at '+maxCltv+'% CLTV'; amt.style.fontSize='13px'; sub.textContent=''; cashout=-1;
+          if(!ghost) show=false;
+        } else if(belowMin) {
+          badge.className='cash-out-badge visible negative'; amt.textContent='Below '+fmt(l.loan_min)+' minimum'; amt.style.fontSize='13px'; sub.textContent='Max available: '+fmt(maxLoan); cashout=-1;
+          if(!ghost) show=false;
         } else {
-          cashBadge.className = 'cash-out-badge visible';
-          cashAmt.textContent = fmt(maxLoan);
-          const resultCltv = (((firstMtg + maxLoan) / propVal) * 100).toFixed(1);
-          cashCltv.textContent = resultCltv + '% CLTV at max | Loan range: ' + (l.loan_min ? fmt(l.loan_min) : '?') + ' - ' + (l.loan_max ? fmt(l.loan_max) : 'no cap');
+          badge.className='cash-out-badge visible'; amt.textContent=fmt(maxLoan); amt.style.fontSize=''; amt.style.color='';
+          const cltv=((firstMtg+maxLoan)/propVal*100).toFixed(1);
+          sub.textContent=cltv+'% CLTV | Range: '+(l.loan_min?fmt(l.loan_min):'?')+' - '+(l.loan_max?fmt(l.loan_max):'no cap');
+          cashout=maxLoan;
         }
       } else {
-        cashBadge.className = 'cash-out-badge visible';
-        cashAmt.textContent = 'Check guidelines';
-        cashAmt.style.fontSize = '14px';
-        cashAmt.style.color = 'var(--yellow)';
-        cashCltv.textContent = 'Max CLTV not confirmed';
+        badge.className='cash-out-badge visible'; amt.textContent='Check guidelines'; amt.style.fontSize='14px'; amt.style.color='var(--yellow)'; sub.textContent='Max CLTV not confirmed'; cashout=0;
       }
     } else {
-      cashBadge.className = 'cash-out-badge';
-      cashAmt.style.fontSize = '';
-      cashAmt.style.color = '';
+      const badge=document.getElementById('cashout-'+idx); badge.className='cash-out-badge';
     }
 
-    card.classList.toggle('hidden', !show);
-    if (show) count++;
+    // Ghost card setup
+    const ghostEl=document.getElementById('ghost-'+idx);
+    if(ghost && show) { ghostEl.textContent=ghostReason; ghostEl.style.display='inline-block'; }
+    else { ghostEl.style.display='none'; }
+
+    card.dataset.cashout = cashout;
+    results.push({idx, show: show||ghost, ghost, cashout});
+  });
+
+  // Sort: matches by cashout desc (if prop data), then limited at bottom, ghosts at very bottom
+  if(hasPV) {
+    results.sort((a,b) => {
+      if(a.ghost !== b.ghost) return a.ghost ? 1 : -1;
+      const aLim=LENDERS[a.idx]._limited, bLim=LENDERS[b.idx]._limited;
+      if(aLim!==bLim) return aLim?1:-1;
+      return b.cashout - a.cashout;
+    });
+  } else {
+    results.sort((a,b) => {
+      if(a.ghost!==b.ghost) return a.ghost?1:-1;
+      const aLim=LENDERS[a.idx]._limited, bLim=LENDERS[b.idx]._limited;
+      return aLim===bLim?0:aLim?1:-1;
+    });
+  }
+
+  const grid=document.getElementById('lender-grid');
+  let count=0;
+  results.forEach(r => {
+    const card=grid.querySelector(`[data-idx="${r.idx}"]`);
+    card.classList.toggle('hidden', !r.show);
+    card.classList.toggle('ghost', r.ghost && r.show);
+    if(r.show && !r.ghost) count++;
+    grid.appendChild(card); // reorder DOM
   });
 
   document.getElementById('match-count').textContent = count;
-
-  const existing = document.querySelector('.no-results');
-  if (existing) existing.remove();
-  if (count === 0) {
-    const msg = document.createElement('div');
-    msg.className = 'no-results';
-    msg.innerHTML = '<h3>No lenders match</h3><p>Try relaxing your filters or reset to see all lenders.</p>';
-    document.getElementById('lender-grid').appendChild(msg);
+  const existing=document.querySelector('.no-results'); if(existing)existing.remove();
+  if(count===0 && !results.some(r=>r.show)) {
+    const msg=document.createElement('div'); msg.className='no-results';
+    msg.innerHTML='<h3>No lenders match</h3><p>Try relaxing your filters or reset.</p>';
+    grid.appendChild(msg);
   }
 }
 
+// URL params
+function updateURL() {
+  const params = new URLSearchParams();
+  const fields = {pv:'f-propval',mtg:'f-firstmtg',fico:'f-fico',st:'f-state',pt:'f-proptype',occ:'f-occupancy',doc:'f-doctype',ch:'f-channel',purp:'f-purpose'};
+  for(const[k,id] of Object.entries(fields)) {
+    const v = id.includes('propval')||id.includes('firstmtg') ? parseNum(document.getElementById(id).value) : document.getElementById(id).value;
+    if(v) params.set(k, v);
+  }
+  const qs = params.toString();
+  history.replaceState(null,'', qs ? '?'+qs : location.pathname);
+}
+function loadURL() {
+  const p = new URLSearchParams(location.search);
+  const map = {pv:'f-propval',mtg:'f-firstmtg',fico:'f-fico',st:'f-state',pt:'f-proptype',occ:'f-occupancy',doc:'f-doctype',ch:'f-channel',purp:'f-purpose'};
+  for(const[k,id] of Object.entries(map)) {
+    const v=p.get(k); if(!v) continue;
+    const el=document.getElementById(id);
+    if(id.includes('propval')||id.includes('firstmtg')) { el.value='$'+parseInt(v).toLocaleString(); }
+    else { el.value=v; }
+  }
+}
+function shareURL() {
+  updateURL();
+  navigator.clipboard.writeText(location.href).then(()=>{
+    const t=document.getElementById('share-toast'); t.classList.add('visible'); setTimeout(()=>t.classList.remove('visible'),3000);
+  });
+}
+
 function resetFilters() {
-  document.getElementById('f-channel').value = '';
-  document.getElementById('f-state').value = '';
-  document.getElementById('f-fico').value = '';
-  document.getElementById('f-propval').value = '';
-  document.getElementById('f-firstmtg').value = '';
-  document.getElementById('f-doctype').value = '';
-  document.getElementById('f-purpose').value = '';
-  document.getElementById('f-occupancy').value = '';
-  document.querySelectorAll('.excluded-tag').forEach(t => t.classList.remove('visible'));
+  ['f-propval','f-firstmtg','f-fico'].forEach(id=>document.getElementById(id).value='');
+  ['f-state','f-proptype','f-occupancy','f-doctype','f-channel','f-purpose'].forEach(id=>document.getElementById(id).value='');
+  document.querySelectorAll('.excluded-tag').forEach(t=>t.classList.remove('visible'));
   document.getElementById('calc-bar').classList.remove('visible');
+  hideLimited=false; document.getElementById('btn-hide-limited').classList.remove('active'); document.getElementById('btn-hide-limited').textContent='Hide Limited Data';
+  history.replaceState(null,'',location.pathname);
   applyFilters();
 }
 
-// Wire up all filter inputs
-document.querySelectorAll('.filter-bar select, .filter-bar input').forEach(el => {
+document.querySelectorAll('.filter-bar select, .filter-bar input, .filter-bar-secondary select').forEach(el => {
   el.addEventListener('change', applyFilters);
   el.addEventListener('input', applyFilters);
 });
 
-// Initial render
 renderCards();
+loadURL();
 applyFilters();
 </script>
 </body>
