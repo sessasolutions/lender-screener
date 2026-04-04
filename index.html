@@ -24,7 +24,7 @@
 
   /* Primary filters */
   .filter-bar { background: var(--white); padding: 14px 32px 8px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-  .filter-bar-secondary { background: var(--white); padding: 0 32px 14px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; position: sticky; top: 68px; z-index: 99; border-bottom: 1px solid var(--gray-200); }
+  .filter-bar-secondary { background: var(--white); padding: 0 32px 14px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; position: sticky; top: 68px; z-index: 99; border-bottom: 1px solid var(--gray-200); }
   @media (max-width: 700px) {
     .filter-bar { grid-template-columns: 1fr 1fr; padding: 12px 16px 6px; top: 0; }
     .filter-bar-secondary { grid-template-columns: 1fr 1fr; padding: 0 16px 12px; top: auto; position: static; }
@@ -130,11 +130,11 @@
   <div class="filter-group"><label>FICO Score</label><input type="number" id="f-fico" placeholder="680" min="300" max="850"></div>
   <div class="filter-group"><label>State</label><select id="f-state"><option value="">Any State</option></select></div>
   <div class="filter-group"><label>Property Type</label><select id="f-proptype"><option value="">Any Type</option><option value="sfr">SFR</option><option value="condo_w">Condo (Warrantable)</option><option value="condo_nw">Condo (Non-Warrantable)</option><option value="2_4_unit">2-4 Unit</option><option value="pud">PUD</option><option value="condotel">Condotel</option><option value="mfg">Manufactured Home</option><option value="mixed">Mixed-Use</option></select></div>
+  <div class="filter-group"><label>Loan Purpose</label><select id="f-purpose"><option value="">Any</option><option value="cash_out">Cash-Out</option><option value="purchase">Purchase</option><option value="rt_refi">Rate/Term Refi</option></select></div>
 </div>
 <div class="filter-bar-secondary">
   <div class="filter-group"><label>Occupancy</label><select id="f-occupancy"><option value="">Any</option><option value="oo">Owner-Occupied</option><option value="second">2nd Home</option><option value="inv">Investment</option></select></div>
   <div class="filter-group"><label>Doc Type</label><select id="f-doctype"><option value="">Any</option><option value="full">Full Doc</option><option value="bank_stmt">Bank Statement</option><option value="dscr">DSCR</option><option value="1099">1099</option><option value="asset">Asset Depletion</option></select></div>
-  <div class="filter-group"><label>Loan Purpose</label><select id="f-purpose"><option value="">Any</option><option value="cash_out">Cash-Out</option><option value="purchase">Purchase</option><option value="rt_refi">Rate/Term Refi</option></select></div>
   <div class="filter-group" style="justify-content:flex-end"><button class="btn-sm" onclick="shareURL()" style="margin-top:auto">Share Link</button></div>
 </div>
 
