@@ -25,10 +25,9 @@
   /* Primary filters */
   .filter-bar { background: var(--white); padding: 14px 32px 8px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
   .filter-bar-secondary { background: var(--white); padding: 0 32px 14px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; position: sticky; top: 68px; z-index: 99; border-bottom: 1px solid var(--gray-200); }
-  @media (max-width: 600px) {
-    .filter-bar, .filter-bar-secondary { grid-template-columns: 1fr 1fr; padding-left: 16px; padding-right: 16px; }
-    .filter-bar { top: 0; }
-    .filter-bar-secondary { top: auto; position: static; }
+  @media (max-width: 700px) {
+    .filter-bar { grid-template-columns: 1fr 1fr; padding: 12px 16px 6px; top: 0; }
+    .filter-bar-secondary { grid-template-columns: 1fr 1fr; padding: 0 16px 12px; top: auto; position: static; }
   }
   .filter-group { display: flex; flex-direction: column; gap: 3px; }
   .filter-group label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-500); }
@@ -42,7 +41,12 @@
   .calc-bar .calc-item { display: flex; flex-direction: column; align-items: center; gap: 1px; }
   .calc-bar .calc-label { font-size: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-400); }
   .calc-bar .calc-value { font-family: var(--mono); font-weight: 600; font-size: 15px; color: var(--accent); }
-  @media (max-width: 600px) { .calc-bar { padding: 10px 16px; gap: 0; justify-content: space-around; } .calc-bar .calc-item { flex: 1; } .calc-bar .calc-value { font-size: 13px; } }
+  @media (max-width: 700px) {
+    .calc-bar { padding: 10px 16px; gap: 8px 0; justify-content: space-around; }
+    .calc-bar .calc-item { flex: 0 0 33.3%; text-align: center; }
+    .calc-bar .calc-value { font-size: 12px; }
+    .calc-bar .calc-label { font-size: 7px; }
+  }
 
   /* Results bar */
   .results-bar { padding: 10px 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
@@ -131,7 +135,7 @@
   <div class="filter-group"><label>Occupancy</label><select id="f-occupancy"><option value="">Any</option><option value="oo">Owner-Occupied</option><option value="second">2nd Home</option><option value="inv">Investment</option></select></div>
   <div class="filter-group"><label>Doc Type</label><select id="f-doctype"><option value="">Any</option><option value="full">Full Doc</option><option value="bank_stmt">Bank Statement</option><option value="dscr">DSCR</option><option value="1099">1099</option><option value="asset">Asset Depletion</option></select></div>
   <div class="filter-group"><label>Loan Purpose</label><select id="f-purpose"><option value="">Any</option><option value="cash_out">Cash-Out</option><option value="purchase">Purchase</option><option value="rt_refi">Rate/Term Refi</option></select></div>
-  <div class="filter-group" style="justify-content:flex-end"><button class="btn-sm" onclick="shareURL()" style="margin-top:auto">Share Scenario</button></div>
+  <div class="filter-group" style="justify-content:flex-end"><button class="btn-sm" onclick="shareURL()" style="margin-top:auto">Share Link</button></div>
 </div>
 
 <div class="calc-bar" id="calc-bar">
