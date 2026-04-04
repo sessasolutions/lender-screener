@@ -102,8 +102,7 @@
   .excluded-tag { font-size: 11px; color: var(--red); font-weight: 500; margin-top: 6px; padding: 3px 7px; background: #fef2f2; border-radius: 4px; display: none; }
   .excluded-tag.visible { display: inline-block; }
 
-  .card-details { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--gray-100); display: none; }
-  .lender-card.expanded .card-details { display: block; }
+  .card-details { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--gray-100); }
   .card-details .detail-row { display: flex; justify-content: space-between; padding: 2px 0; font-size: 11px; }
   .card-details .detail-row .dlabel { color: var(--gray-500); }
   .card-details .detail-row .dvalue { color: var(--gray-700); font-weight: 500; text-align: right; max-width: 60%; }
@@ -115,8 +114,6 @@
   .contact-row .web-btn { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
   .contact-row .web-btn:hover { background: #dbeafe; }
 
-  .expand-btn { display: block; width: 100%; margin-top: 8px; padding: 4px; font-family: var(--font); font-size: 10px; font-weight: 600; color: var(--gray-400); background: none; border: 1px solid var(--gray-200); border-radius: 5px; cursor: pointer; transition: all 0.15s; }
-  .expand-btn:hover { color: var(--accent); border-color: var(--accent); }
 
   .no-results { grid-column: 1 / -1; text-align: center; padding: 50px 20px; color: var(--gray-400); }
   .no-results h3 { font-size: 16px; margin-bottom: 6px; color: var(--gray-500); }
@@ -254,12 +251,11 @@ function renderCards() {
         <div class="detail-row"><span class="dlabel">Terms</span><span class="dvalue">${l.terms}</span></div>
         ${l.guideline_url?`<div class="detail-row"><span class="dlabel">Guidelines</span><span class="dvalue"><a href="${l.guideline_url}" target="_blank" style="color:var(--accent)">View</a></span></div>`:''}
       </div>
-      <button class="expand-btn" onclick="toggleExpand(this)">Show Details</button>`;
+    `;
     grid.appendChild(card);
   });
 }
 
-function toggleExpand(btn) { const c=btn.closest('.lender-card'); c.classList.toggle('expanded'); btn.textContent=c.classList.contains('expanded')?'Hide Details':'Show Details'; }
 function toggleLimited() { hideLimited=!hideLimited; document.getElementById('btn-hide-limited').classList.toggle('active',hideLimited); document.getElementById('btn-hide-limited').textContent=hideLimited?'Show All':'Hide Limited Data'; applyFilters(); }
 
 function updateCalcBar(pv, fm) {
