@@ -239,7 +239,6 @@ function renderCards() {
       </div>
       <div class="excluded-tag" id="excl-${idx}"></div>
       <div class="ghost-reason" id="ghost-${idx}" style="display:none"></div>
-      ${(l.phone||l.website)?`<div class="contact-row">${l.phone?`<a href="tel:${l.phone}" class="call-btn">\u260E ${l.phone.replace(/(\d{3})(\d{3})(\d{4})/,'($1) $2-$3')}</a>`:''}${l.website?`<a href="${l.website}" class="web-btn" target="_blank">\u2197 Website</a>`:''}</div>`:''}
       <div class="card-details">
         <div class="detail-row"><span class="dlabel">FICO Detail</span><span class="dvalue">${l.fico_note}</span></div>
         <div class="detail-row"><span class="dlabel">Purposes</span><span class="dvalue">${l.purpose_note}</span></div>
@@ -251,6 +250,7 @@ function renderCards() {
         <div class="detail-row"><span class="dlabel">Terms</span><span class="dvalue">${l.terms}</span></div>
         ${l.guideline_url?`<div class="detail-row"><span class="dlabel">Guidelines</span><span class="dvalue"><a href="${l.guideline_url}" target="_blank" style="color:var(--accent)">View</a></span></div>`:''}
       </div>
+      ${(l.phone||l.website)?`<div class="contact-row">${l.phone?`<a href="tel:${l.phone}" class="call-btn">\u260E ${l.phone.replace(/(\d{3})(\d{3})(\d{4})/,'($1) $2-$3')}</a>`:''}${l.website?`<a href="${l.website}" class="web-btn" target="_blank">\u2197 Website</a>`:''}</div>`:''}
     `;
     grid.appendChild(card);
   });
