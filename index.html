@@ -24,7 +24,7 @@
   @media (max-width: 700px) { .header { flex-direction: column; align-items: flex-start; gap: 4px; padding: 12px 16px; } .header h1 { font-size: 17px; } .header-meta { font-size: 10px; } }
 
   .filters-wrapper { position: sticky; top: 0; z-index: 100; background: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-bottom: 1px solid var(--gray-200); }
-  .filter-bar { padding: 12px 32px 6px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+  .filter-bar { padding: 12px 32px 6px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
   .filter-bar-secondary { padding: 0 32px 12px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
   .more-filters-btn { display: none; padding: 6px; font-family: var(--font); font-size: 11px; font-weight: 600; color: var(--gray-500); background: none; border: 1px solid var(--gray-200); border-radius: 5px; cursor: pointer; width: calc(100% - 32px); margin: 0 16px 10px; }
   .more-filters-btn:hover { color: var(--accent); border-color: var(--accent); }
@@ -121,6 +121,7 @@
 <div class="filter-bar">
   <div class="filter-group"><label>Property Value</label><input type="text" id="f-propval" placeholder="$800,000" inputmode="numeric"></div>
   <div class="filter-group"><label>1st Mortgage</label><input type="text" id="f-firstmtg" placeholder="$500,000" inputmode="numeric"></div>
+  <div class="filter-group"><label>Cash Needed</label><input type="text" id="f-cashneeded" placeholder="$200,000" inputmode="numeric"></div>
   <div class="filter-group"><label>FICO Score</label><input type="number" id="f-fico" placeholder="680" min="300" max="850"></div>
   <div class="filter-group"><label>State</label><select id="f-state"><option value="">Any State</option></select></div>
   <div class="filter-group"><label>Property Type</label><select id="f-proptype"><option value="">Any Type</option><option value="sfr">SFR</option><option value="condo_w">Condo (Warrantable)</option><option value="condo_nw">Condo (Non-Warrantable)</option><option value="2_4_unit">2-4 Unit</option><option value="pud">PUD</option><option value="condotel">Condotel</option><option value="mfg">Manufactured Home</option><option value="mixed">Mixed-Use</option></select></div>
@@ -209,6 +210,7 @@ function getMaxCltv(l,dt) { if(dt==='bank_stmt'&&l.max_cltv_bs!=null)return l.ma
 
 document.getElementById('f-propval').addEventListener('input', function(){formatInput(this);applyFilters();});
 document.getElementById('f-firstmtg').addEventListener('input', function(){formatInput(this);applyFilters();});
+document.getElementById('f-cashneeded').addEventListener('input', function(){formatInput(this);applyFilters();});
 
 function renderCards() {
   const grid = document.getElementById('lender-grid');
@@ -289,8 +291,10 @@ function updateHeader() {
   const occ = document.getElementById('f-occupancy').value;
   const doc = document.getElementById('f-doctype').value;
   const cit = document.getElementById('f-citizenship').value;
+  const cn = parseNum(document.getElementById('f-cashneeded').value);
   if(pv) parts.push(fmtShort(pv));
   if(fm) parts.push(fmtShort(fm)+' 1st');
+  if(cn) parts.push('Need '+fmtShort(cn));
   if(fico) parts.push(fico+' FICO');
   if(state) parts.push(state);
   if(pt) parts.push(PROPTYPE_LABELS[pt]||pt);
@@ -313,6 +317,7 @@ function applyFilters() {
   const housingHistory=document.getElementById('f-lates').value;
   const firstType=document.getElementById('f-firsttype').value;
   const entityReq=document.getElementById('f-entity').value==='yes';
+  const cashNeeded=parseNum(document.getElementById('f-cashneeded').value)||null;
   const propVal=parseNum(document.getElementById('f-propval').value)||null;
   const firstMtg=parseNum(document.getElementById('f-firstmtg').value)||0;
   const hasPV = propVal && propVal > 0;
@@ -427,6 +432,8 @@ function applyFilters() {
           const cltv=((firstMtg+maxLoan)/propVal*100).toFixed(1);
           sub.textContent=cltv+'% CLTV | Range: '+(l.loan_min?fmt(l.loan_min):'?')+' - '+(l.loan_max?fmt(l.loan_max):'no cap');
           cashout=maxLoan;
+          // Filter by cash needed
+          if(cashNeeded && maxLoan < cashNeeded && !ghost) { show=false; }
         }
       } else {
         badge.className='cash-out-badge visible'; amt.textContent='Verify'; amt.style.cssText='font-size:13px;color:var(--yellow)'; sub.textContent='Max CLTV not confirmed'; cashout=0;
@@ -514,7 +521,7 @@ function copyScenario() {
 }
 
 // URL params
-const PARAM_MAP = {pv:'f-propval',mtg:'f-firstmtg',fico:'f-fico',st:'f-state',pt:'f-proptype',occ:'f-occupancy',doc:'f-doctype',cit:'f-citizenship',io:'f-io',se:'f-se',ce:'f-creditevent',lates:'f-lates',ft:'f-firsttype',ent:'f-entity'};
+const PARAM_MAP = {pv:'f-propval',mtg:'f-firstmtg',cn:'f-cashneeded',fico:'f-fico',st:'f-state',pt:'f-proptype',occ:'f-occupancy',doc:'f-doctype',cit:'f-citizenship',io:'f-io',se:'f-se',ce:'f-creditevent',lates:'f-lates',ft:'f-firsttype',ent:'f-entity'};
 function updateURL() {
   const params = new URLSearchParams();
   for(const[k,id] of Object.entries(PARAM_MAP)) {
@@ -541,7 +548,7 @@ function shareURL() {
 }
 
 function resetFilters() {
-  ['f-propval','f-firstmtg','f-fico'].forEach(id=>document.getElementById(id).value='');
+  ['f-propval','f-firstmtg','f-cashneeded','f-fico'].forEach(id=>document.getElementById(id).value='');
   ['f-state','f-proptype','f-occupancy','f-doctype','f-citizenship','f-io','f-se','f-creditevent','f-lates','f-firsttype','f-entity'].forEach(id=>document.getElementById(id).value='');
   document.querySelectorAll('.excluded-tag').forEach(t=>t.classList.remove('visible'));
   document.getElementById('calc-bar').classList.remove('visible');
