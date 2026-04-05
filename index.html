@@ -26,8 +26,14 @@
   .filters-wrapper { position: sticky; top: 0; z-index: 100; background: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-bottom: 1px solid var(--gray-200); }
   .filter-bar { padding: 12px 32px 6px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
   .filter-bar-secondary { padding: 0 32px 12px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+  .more-filters-btn { display: none; padding: 6px; font-family: var(--font); font-size: 11px; font-weight: 600; color: var(--gray-500); background: none; border: 1px solid var(--gray-200); border-radius: 5px; cursor: pointer; width: calc(100% - 32px); margin: 0 16px 10px; }
+  .more-filters-btn:hover { color: var(--accent); border-color: var(--accent); }
   @media (max-width: 700px) {
-    .filter-bar, .filter-bar-secondary { grid-template-columns: 1fr 1fr; padding-left: 16px; padding-right: 16px; }
+    .filter-bar { grid-template-columns: 1fr 1fr; padding: 10px 16px 6px; }
+    .filter-bar-secondary { grid-template-columns: 1fr 1fr; padding: 0 16px 10px; display: none; }
+    .filter-bar-secondary.expanded { display: grid; }
+    .more-filters-btn { display: block; }
+    .more-filters-btn.expanded { margin-bottom: 0; }
   }
   .filter-group { display: flex; flex-direction: column; gap: 2px; }
   .filter-group label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-500); }
@@ -120,7 +126,8 @@
   <div class="filter-group"><label>Property Type</label><select id="f-proptype"><option value="">Any Type</option><option value="sfr">SFR</option><option value="condo_w">Condo (Warrantable)</option><option value="condo_nw">Condo (Non-Warrantable)</option><option value="2_4_unit">2-4 Unit</option><option value="pud">PUD</option><option value="condotel">Condotel</option><option value="mfg">Manufactured Home</option><option value="mixed">Mixed-Use</option></select></div>
   <div class="filter-group"><label>Loan Purpose</label><select id="f-purpose"><option value="">Any</option><option value="cash_out">Cash-Out</option><option value="purchase">Purchase</option><option value="rt_refi">Rate/Term Refi</option></select></div>
 </div>
-<div class="filter-bar-secondary">
+<button class="more-filters-btn" id="more-filters-btn" onclick="toggleMoreFilters()">More Filters</button>
+<div class="filter-bar-secondary" id="filter-bar-secondary">
   <div class="filter-group"><label>Occupancy</label><select id="f-occupancy"><option value="">Any</option><option value="oo">Owner-Occupied</option><option value="second">2nd Home</option><option value="inv">Investment</option></select></div>
   <div class="filter-group"><label>Doc Type</label><select id="f-doctype"><option value="">Any</option><option value="full">Full Doc</option><option value="bank_stmt">Bank Statement</option><option value="dscr">DSCR</option><option value="1099">1099</option><option value="asset">Asset Depletion</option></select></div>
   <div class="filter-group"><label>Citizenship</label><select id="f-citizenship"><option value="">Any</option><option value="us">US Citizen</option><option value="perm_res">Permanent Resident</option><option value="non_perm">Non-Perm Resident</option><option value="fn">Foreign National</option><option value="itin">ITIN / DACA</option></select></div>
@@ -257,6 +264,13 @@ function renderCards() {
   });
 }
 
+function toggleMoreFilters() {
+  const sec = document.getElementById('filter-bar-secondary');
+  const btn = document.getElementById('more-filters-btn');
+  sec.classList.toggle('expanded');
+  btn.classList.toggle('expanded');
+  btn.textContent = sec.classList.contains('expanded') ? 'Hide Filters' : 'More Filters';
+}
 function toggleLimited() { hideLimited=!hideLimited; document.getElementById('btn-hide-limited').classList.toggle('active',hideLimited); document.getElementById('btn-hide-limited').textContent=hideLimited?'Show All':'Hide Limited'; applyFilters(); }
 
 function updateCalcBar(pv, fm) {
