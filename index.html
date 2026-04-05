@@ -24,7 +24,7 @@
   @media (max-width: 700px) { .header { flex-direction: column; align-items: flex-start; gap: 4px; padding: 12px 16px; } .header h1 { font-size: 17px; } .header-meta { font-size: 10px; } }
 
   .filters-wrapper { position: sticky; top: 0; z-index: 100; background: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-bottom: 1px solid var(--gray-200); }
-  .filter-bar { padding: 12px 32px 6px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+  .filter-bar { padding: 12px 32px 6px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
   .filter-bar-secondary { padding: 0 32px 12px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
   .more-filters-btn { display: none; padding: 6px; font-family: var(--font); font-size: 11px; font-weight: 600; color: var(--gray-500); background: none; border: 1px solid var(--gray-200); border-radius: 5px; cursor: pointer; width: calc(100% - 32px); margin: 0 16px 10px; }
   .more-filters-btn:hover { color: var(--accent); border-color: var(--accent); }
@@ -124,7 +124,7 @@
   <div class="filter-group"><label>FICO Score</label><input type="number" id="f-fico" placeholder="680" min="300" max="850"></div>
   <div class="filter-group"><label>State</label><select id="f-state"><option value="">Any State</option></select></div>
   <div class="filter-group"><label>Property Type</label><select id="f-proptype"><option value="">Any Type</option><option value="sfr">SFR</option><option value="condo_w">Condo (Warrantable)</option><option value="condo_nw">Condo (Non-Warrantable)</option><option value="2_4_unit">2-4 Unit</option><option value="pud">PUD</option><option value="condotel">Condotel</option><option value="mfg">Manufactured Home</option><option value="mixed">Mixed-Use</option></select></div>
-  <div class="filter-group"><label>Loan Purpose</label><select id="f-purpose"><option value="">Any</option><option value="cash_out">Cash-Out</option><option value="purchase">Purchase</option><option value="rt_refi">Rate/Term Refi</option></select></div>
+
 </div>
 <button class="more-filters-btn" id="more-filters-btn" onclick="toggleMoreFilters()">More Filters</button>
 <div class="filter-bar-secondary" id="filter-bar-secondary">
@@ -295,7 +295,6 @@ function updateHeader() {
   const pt = document.getElementById('f-proptype').value;
   const occ = document.getElementById('f-occupancy').value;
   const doc = document.getElementById('f-doctype').value;
-  const purp = document.getElementById('f-purpose').value;
   const cit = document.getElementById('f-citizenship').value;
   if(pv) parts.push(fmtShort(pv));
   if(fm) parts.push(fmtShort(fm)+' 1st');
@@ -304,7 +303,6 @@ function updateHeader() {
   if(pt) parts.push(PROPTYPE_LABELS[pt]||pt);
   if(occ) parts.push(OCC_LABELS[occ]||occ);
   if(doc) parts.push(DOC_LABELS[doc]||doc);
-  if(purp) parts.push(PURPOSE_LABELS[purp]||purp);
   if(cit) parts.push(CIT_LABELS[cit]||cit);
   if(parts.length > 0) { meta.textContent = parts.join(' \u00B7 '); meta.classList.add('scenario'); }
   else { meta.textContent = 'April 2026 \u00B7 18 Lenders \u00B7 Verify with lender scenario desks'; meta.classList.remove('scenario'); }
@@ -313,7 +311,7 @@ function updateHeader() {
 function applyFilters() {
   const state=document.getElementById('f-state').value;
   const fico=parseInt(document.getElementById('f-fico').value)||null;
-  const docType=document.getElementById('f-doctype').value, purpose=document.getElementById('f-purpose').value;
+  const docType=document.getElementById('f-doctype').value;
   const occupancy=document.getElementById('f-occupancy').value, propType=document.getElementById('f-proptype').value;
   const citizenship=document.getElementById('f-citizenship').value;
   const ioReq=document.getElementById('f-io').value==='yes';
@@ -357,7 +355,6 @@ function applyFilters() {
     }
 
     if(docType && show && !ghost) { if(!l.doc_types.includes(docType)) show=false; }
-    if(purpose && show && !ghost) { if(!l.purposes.includes(purpose)) show=false; }
     if(occupancy && show && !ghost) { if(!l.occupancy.includes(occupancy)) show=false; }
     if(propType && show && !ghost) { if(l.property_types.length > 0 && !l.property_types.includes(propType)) show=false; }
 
@@ -475,7 +472,7 @@ function copyScenario() {
   const pv=parseNum(document.getElementById('f-propval').value), fm=parseNum(document.getElementById('f-firstmtg').value);
   const fico=document.getElementById('f-fico').value, state=document.getElementById('f-state').value;
   const pt=document.getElementById('f-proptype').value, occ=document.getElementById('f-occupancy').value;
-  const doc=document.getElementById('f-doctype').value, purp=document.getElementById('f-purpose').value;
+  const doc=document.getElementById('f-doctype').value;
   const cit=document.getElementById('f-citizenship').value;
 
   let text = 'Non-QM 2nd Lien Scenario\n';
@@ -487,7 +484,6 @@ function copyScenario() {
   if(pt) details.push(PROPTYPE_LABELS[pt]||pt);
   if(occ) details.push(OCC_LABELS[occ]||occ);
   if(doc) details.push(DOC_LABELS[doc]||doc);
-  if(purp) details.push(PURPOSE_LABELS[purp]||purp);
   if(cit) details.push(CIT_LABELS[cit]||cit);
   if(details.length) text += details.join(' | ') + '\n';
 
@@ -511,7 +507,7 @@ function copyScenario() {
 }
 
 // URL params
-const PARAM_MAP = {pv:'f-propval',mtg:'f-firstmtg',fico:'f-fico',st:'f-state',pt:'f-proptype',occ:'f-occupancy',doc:'f-doctype',purp:'f-purpose',cit:'f-citizenship',io:'f-io',ppp:'f-ppp',se:'f-se',ce:'f-creditevent',ent:'f-entity',sa:'f-standalone'};
+const PARAM_MAP = {pv:'f-propval',mtg:'f-firstmtg',fico:'f-fico',st:'f-state',pt:'f-proptype',occ:'f-occupancy',doc:'f-doctype',cit:'f-citizenship',io:'f-io',ppp:'f-ppp',se:'f-se',ce:'f-creditevent',ent:'f-entity',sa:'f-standalone'};
 function updateURL() {
   const params = new URLSearchParams();
   for(const[k,id] of Object.entries(PARAM_MAP)) {
@@ -539,7 +535,7 @@ function shareURL() {
 
 function resetFilters() {
   ['f-propval','f-firstmtg','f-fico'].forEach(id=>document.getElementById(id).value='');
-  ['f-state','f-proptype','f-occupancy','f-doctype','f-purpose','f-citizenship','f-io','f-ppp','f-se','f-creditevent','f-entity','f-standalone'].forEach(id=>document.getElementById(id).value='');
+  ['f-state','f-proptype','f-occupancy','f-doctype','f-citizenship','f-io','f-ppp','f-se','f-creditevent','f-entity','f-standalone'].forEach(id=>document.getElementById(id).value='');
   document.querySelectorAll('.excluded-tag').forEach(t=>t.classList.remove('visible'));
   document.getElementById('calc-bar').classList.remove('visible');
   hideLimited=false; document.getElementById('btn-hide-limited').classList.remove('active'); document.getElementById('btn-hide-limited').textContent='Hide Limited';
