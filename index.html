@@ -135,7 +135,6 @@
   <div class="filter-group"><label>Self-Employed</label><select id="f-se"><option value="">Any</option><option value="1">1 Year OK</option></select></div>
   <div class="filter-group"><label>Credit Event (BK/FC/SS)</label><select id="f-creditevent"><option value="">No Event</option><option value="84">7+ years ago</option><option value="48">4+ years ago</option><option value="24">2+ years ago</option></select></div>
   <div class="filter-group"><label>Entity (LLC/Corp)</label><select id="f-entity"><option value="">Any</option><option value="yes">LLC/Corp Required</option></select></div>
-  <div class="filter-group"><label>Standalone 2nd</label><select id="f-standalone"><option value="">Any</option><option value="yes">Standalone Only</option></select></div>
 </div>
 </div>
 
@@ -252,7 +251,6 @@ function renderCards() {
         <div class="detail-row"><span class="dlabel">Credit Event Seasoning</span><span class="dvalue">${l.credit_event_mo ? l.credit_event_mo+' months' : 'Check guidelines'}</span></div>
         <div class="detail-row"><span class="dlabel">Max Combined (1st+2nd)</span><span class="dvalue">${l.max_combined ? fmt(l.max_combined) : 'Check guidelines'}</span></div>
         <div class="detail-row"><span class="dlabel">Entity Vesting (LLC)</span><span class="dvalue">${l.entity_ok===true?'Yes':l.entity_ok===false?'No':'Check guidelines'}</span></div>
-        <div class="detail-row"><span class="dlabel">Standalone 2nd</span><span class="dvalue">${l.standalone?'Yes':'Piggyback only'}</span></div>
         <div class="detail-row"><span class="dlabel">Terms</span><span class="dvalue">${l.terms}</span></div>
         ${l.guideline_url?`<div class="detail-row"><span class="dlabel">Guidelines</span><span class="dvalue"><a href="${l.guideline_url}" target="_blank" style="color:var(--accent)">View</a></span></div>`:''}
       </div>
@@ -317,7 +315,6 @@ function applyFilters() {
   const se1yr=document.getElementById('f-se').value==='1';
   const creditEvent=parseInt(document.getElementById('f-creditevent').value)||null;
   const entityReq=document.getElementById('f-entity').value==='yes';
-  const standaloneReq=document.getElementById('f-standalone').value==='yes';
   const propVal=parseNum(document.getElementById('f-propval').value)||null;
   const firstMtg=parseNum(document.getElementById('f-firstmtg').value)||0;
   const hasPV = propVal && propVal > 0;
@@ -375,9 +372,6 @@ function applyFilters() {
 
     // Entity vesting (LLC)
     if(entityReq && show && !ghost) { if(l.entity_ok === false) show=false; }
-
-    // Standalone only
-    if(standaloneReq && show && !ghost) { if(l.standalone === false) show=false; }
 
     // Max combined loan check
     if(hasPV && firstMtg && show && !ghost) {
@@ -505,7 +499,7 @@ function copyScenario() {
 }
 
 // URL params
-const PARAM_MAP = {pv:'f-propval',mtg:'f-firstmtg',fico:'f-fico',st:'f-state',pt:'f-proptype',occ:'f-occupancy',doc:'f-doctype',cit:'f-citizenship',io:'f-io',ppp:'f-ppp',se:'f-se',ce:'f-creditevent',ent:'f-entity',sa:'f-standalone'};
+const PARAM_MAP = {pv:'f-propval',mtg:'f-firstmtg',fico:'f-fico',st:'f-state',pt:'f-proptype',occ:'f-occupancy',doc:'f-doctype',cit:'f-citizenship',io:'f-io',ppp:'f-ppp',se:'f-se',ce:'f-creditevent',ent:'f-entity',};
 function updateURL() {
   const params = new URLSearchParams();
   for(const[k,id] of Object.entries(PARAM_MAP)) {
@@ -533,7 +527,7 @@ function shareURL() {
 
 function resetFilters() {
   ['f-propval','f-firstmtg','f-fico'].forEach(id=>document.getElementById(id).value='');
-  ['f-state','f-proptype','f-occupancy','f-doctype','f-citizenship','f-io','f-ppp','f-se','f-creditevent','f-entity','f-standalone'].forEach(id=>document.getElementById(id).value='');
+  ['f-state','f-proptype','f-occupancy','f-doctype','f-citizenship','f-io','f-ppp','f-se','f-creditevent','f-entity'].forEach(id=>document.getElementById(id).value='');
   document.querySelectorAll('.excluded-tag').forEach(t=>t.classList.remove('visible'));
   document.getElementById('calc-bar').classList.remove('visible');
   hideLimited=false; document.getElementById('btn-hide-limited').classList.remove('active'); document.getElementById('btn-hide-limited').textContent='Hide Limited';
