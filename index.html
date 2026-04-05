@@ -336,7 +336,17 @@ function applyFilters() {
       if(l.excluded_states.includes(state)) show=false;
       if(l.fund_states_whitelist && !l.fund_states_whitelist.includes(state)) show=false;
       const et=document.getElementById('excl-'+idx);
-      if(l.excluded_states_conditional && l.excluded_states_conditional[state]) { et.textContent='\u26A0 '+state+': '+l.excluded_states_conditional[state]; et.classList.add('visible'); } else { et.classList.remove('visible'); }
+      if(l.excluded_states_conditional && l.excluded_states_conditional[state]) {
+        const cond = l.excluded_states_conditional[state];
+        // If the conditional restriction matches the selected occupancy, fully exclude
+        if((occupancy==='oo' && cond.toLowerCase().includes('owner-occupied')) ||
+           (occupancy==='oo' && cond.toLowerCase().includes('no oo')) ||
+           (occupancy==='inv' && cond.toLowerCase().includes('no inv'))) {
+          show=false;
+        } else {
+          et.textContent='\u26A0 '+state+': '+cond; et.classList.add('visible');
+        }
+      } else { et.classList.remove('visible'); }
     }
 
     // FICO (near-miss)
