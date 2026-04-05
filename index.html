@@ -24,7 +24,7 @@
   @media (max-width: 700px) { .header { flex-direction: column; align-items: flex-start; gap: 4px; padding: 12px 16px; } .header h1 { font-size: 17px; } .header-meta { font-size: 10px; } }
 
   .filters-wrapper { position: sticky; top: 0; z-index: 100; background: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-bottom: 1px solid var(--gray-200); }
-  .filter-bar { padding: 12px 32px 6px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .filter-bar { padding: 12px 32px 6px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
   .filter-bar-secondary { padding: 0 32px 12px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
   .more-filters-btn { display: none; padding: 6px; font-family: var(--font); font-size: 11px; font-weight: 600; color: var(--gray-500); background: none; border: 1px solid var(--gray-200); border-radius: 5px; cursor: pointer; width: calc(100% - 32px); margin: 0 16px 10px; }
   .more-filters-btn:hover { color: var(--accent); border-color: var(--accent); }
@@ -124,11 +124,10 @@
   <div class="filter-group"><label>FICO Score</label><input type="number" id="f-fico" placeholder="680" min="300" max="850"></div>
   <div class="filter-group"><label>State</label><select id="f-state"><option value="">Any State</option></select></div>
   <div class="filter-group"><label>Property Type</label><select id="f-proptype"><option value="">Any Type</option><option value="sfr">SFR</option><option value="condo_w">Condo (Warrantable)</option><option value="condo_nw">Condo (Non-Warrantable)</option><option value="2_4_unit">2-4 Unit</option><option value="pud">PUD</option><option value="condotel">Condotel</option><option value="mfg">Manufactured Home</option><option value="mixed">Mixed-Use</option></select></div>
-
+  <div class="filter-group"><label>Occupancy</label><select id="f-occupancy"><option value="">Any</option><option value="oo">Owner-Occupied</option><option value="second">2nd Home</option><option value="inv">Investment</option></select></div>
 </div>
 <button class="more-filters-btn" id="more-filters-btn" onclick="toggleMoreFilters()">More Filters</button>
 <div class="filter-bar-secondary" id="filter-bar-secondary">
-  <div class="filter-group"><label>Occupancy</label><select id="f-occupancy"><option value="">Any</option><option value="oo">Owner-Occupied</option><option value="second">2nd Home</option><option value="inv">Investment</option></select></div>
   <div class="filter-group"><label>Doc Type</label><select id="f-doctype"><option value="">Any</option><option value="full">Full Doc</option><option value="bank_stmt">Bank Statement</option><option value="dscr">DSCR</option><option value="1099">1099</option><option value="asset">Asset Depletion</option></select></div>
   <div class="filter-group"><label>Citizenship</label><select id="f-citizenship"><option value="">Any</option><option value="us">US Citizen</option><option value="perm_res">Permanent Resident</option><option value="non_perm">Non-Perm Resident</option><option value="fn">Foreign National</option><option value="itin">ITIN / DACA</option></select></div>
   <div class="filter-group"><label>Interest-Only</label><select id="f-io"><option value="">Any</option><option value="yes">IO Required</option></select></div>
