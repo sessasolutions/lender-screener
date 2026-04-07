@@ -547,13 +547,12 @@ function renderTabBar() {
   const bar = document.getElementById('tab-bar');
   bar.innerHTML = '';
   PRODUCT_TABS.forEach(tab => {
-    const btn = document.createElement('button');
     const hasData = LENDERS.some(l => l.product_keys.includes(tab.key));
-    btn.className = 'tab-btn' + (tab.key === activeTab ? ' active' : '') + (!hasData ? ' disabled' : '');
+    if (!hasData) return;  // Hide tabs with no data
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn' + (tab.key === activeTab ? ' active' : '');
     btn.innerHTML = '<span class="tab-icon">' + tab.icon + '</span>' + tab.label;
-    if (hasData) {
-      btn.onclick = () => switchTab(tab.key);
-    }
+    btn.onclick = () => switchTab(tab.key);
     bar.appendChild(btn);
   });
 }
