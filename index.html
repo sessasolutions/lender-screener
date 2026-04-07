@@ -112,6 +112,23 @@
   .empty-tab { grid-column: 1 / -1; text-align: center; padding: 60px 20px; }
   .empty-tab h3 { font-size: 18px; font-weight: 700; color: var(--gray-500); margin-bottom: 8px; }
   .empty-tab p { font-size: 13px; color: var(--gray-400); max-width: 400px; margin: 0 auto; }
+  .tab-desc { text-align: center; font-size: 11px; color: var(--gray-400); font-style: italic; padding: 2px 32px 6px; }
+  .date-fresh { color: var(--green); }
+  .date-aging { color: #d97706; }
+  .date-stale { color: var(--red); }
+  .compare-check { width: 15px; height: 15px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
+  .compare-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--navy); color: var(--white); padding: 10px 20px; border-radius: 10px; display: none; z-index: 200; box-shadow: 0 4px 12px rgba(0,0,0,0.3); align-items: center; gap: 10px; font-size: 13px; font-weight: 600; }
+  .compare-bar.visible { display: flex; }
+  .compare-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 300; display: none; overflow-y: auto; padding: 20px; }
+  .compare-overlay.visible { display: block; }
+  .compare-table { background: var(--white); border-radius: 10px; max-width: 950px; margin: 40px auto; overflow-x: auto; }
+  .compare-table table { width: 100%; border-collapse: collapse; font-size: 12px; font-family: var(--font); }
+  .compare-table th { background: var(--navy); color: var(--white); padding: 10px 14px; text-align: left; font-size: 13px; }
+  .compare-table td { padding: 8px 14px; border-bottom: 1px solid var(--gray-200); vertical-align: top; }
+  .compare-table tr:nth-child(even) td { background: var(--gray-50); }
+  .compare-table .best { color: var(--green); font-weight: 700; }
+  .compare-close { position: fixed; top: 25px; right: 25px; font-size: 28px; color: var(--white); cursor: pointer; background: none; border: none; z-index: 301; }
+  @media (max-width: 700px) { .compare-table { margin: 10px; } .compare-bar { bottom: 10px; font-size: 12px; padding: 8px 14px; } }
 </style>
 </head>
 <body>
@@ -124,6 +141,7 @@
 <div class="tab-bar" id="tab-bar"></div>
 
 <div class="filters-wrapper">
+<div id="tab-description" class="tab-desc"></div>
 <div class="filter-bar" id="filter-bar"></div>
 <button class="more-filters-btn" id="more-filters-btn" onclick="toggleMoreFilters()">More Filters</button>
 <div class="filter-bar-secondary" id="filter-bar-secondary"></div>
@@ -140,6 +158,16 @@
 
 <div class="lender-grid" id="lender-grid"></div>
 <div class="share-toast" id="share-toast">Copied to clipboard</div>
+
+<div class="compare-bar" id="compare-bar">
+  <span id="compare-count">0 selected</span>
+  <button class="btn-sm" style="background:var(--accent);color:white;border-color:var(--accent)" onclick="showCompare()">Compare</button>
+  <button class="btn-sm" onclick="clearCompare()">Clear</button>
+</div>
+<div class="compare-overlay" id="compare-overlay" onclick="if(event.target===this)closeCompare()">
+  <button class="compare-close" onclick="closeCompare()">&times;</button>
+  <div class="compare-table" id="compare-table"></div>
+</div>
 
 <script>
 // ============================================================
@@ -756,20 +784,6 @@ const LENDERS = [
 ];
 
 // ============================================================
-// COMPLETENESS SCORING (per-product)
-// ============================================================
-LENDERS.forEach(l => {
-  for (const pk of l.product_keys) {
-    const p = l.products[pk];
-    if (!p) continue;
-    const checks = [p.max_cltv, p.max_cltv_bs, l.shared.min_fico, p.loan_min, p.loan_max, p.max_dti, p.io, p.ppp];
-    const filled = checks.filter(v => v !== null && v !== undefined && !String(v).includes('Check') && !String(v).includes('Verify')).length;
-    p._completeness = filled / checks.length;
-    p._limited = p._completeness < 0.5;
-  }
-});
-
-// ============================================================
 // LABEL MAPS
 // ============================================================
 const US_STATES = ["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY","DC","PR"];
@@ -781,6 +795,14 @@ const CIT_LABELS = {us:'US Cit',perm_res:'Perm Res',non_perm:'Non-Perm',fn:'Fore
 const TAB_LABELS = {};
 PRODUCT_TABS.forEach(t => { TAB_LABELS[t.key] = t.label; });
 
+const TAB_DESCRIPTIONS = {
+  ces: "Cash out without touching your 1st mortgage",
+  dscr: "Investment property qualified on rental income",
+  bank_stmt: "Self-employed borrowers using bank deposits",
+  full_doc: "Tax returns & W-2s with expanded credit guidelines",
+  foreign_natl: "Non-US citizens without SSN"
+};
+
 // ============================================================
 // UTILITY FUNCTIONS
 // ============================================================
@@ -788,6 +810,36 @@ function parseNum(s) { return parseInt(String(s||'').replace(/[^0-9]/g,''))||0; 
 function formatInput(el) { const n=parseNum(el.value); if(n>0){const p=el.selectionStart,ol=el.value.length; el.value='$'+n.toLocaleString(); el.setSelectionRange(p+(el.value.length-ol),p+(el.value.length-ol));} }
 function fmt(n) { if(n==null)return null; if(n>=1000000)return '$'+(n/1000000).toFixed(1)+'M'; return '$'+Math.round(n).toLocaleString(); }
 function fmtShort(n) { if(n>=1000000)return '$'+(n/1000000).toFixed(1)+'M'; if(n>=1000)return '$'+Math.round(n/1000)+'K'; return '$'+n; }
+
+function getDateClass(dateStr) {
+  if (!dateStr) return '';
+  const months = {Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,Jul:7,Aug:8,Sep:9,Oct:10,Nov:11,Dec:12};
+  const parts = dateStr.split(' ');
+  if (parts.length !== 2) return '';
+  const month = months[parts[0]] || 0;
+  const year = parseInt(parts[1]);
+  if (year >= 2026) return 'date-fresh';
+  if (year === 2025 && month >= 7) return 'date-aging';
+  return 'date-stale';
+}
+
+function resolveVerify(val, field) {
+  if (val !== 'Verify') return val;
+  const defaults = {
+    ppp: 'Inv only (verify terms)',
+    reserves: 'Per matrix',
+    expense_ratio: '50% standard',
+    vacant_rules: 'Verify with lender',
+    max_dti: '50%',
+    visa_types: 'Verify with lender'
+  };
+  return defaults[field] || val;
+}
+
+function calcPmt(rate, nper, pv) {
+  const r = rate / 12;
+  return pv * r * Math.pow(1+r, nper) / (Math.pow(1+r, nper) - 1);
+}
 
 function getMaxCltv(p, dt) {
   if (dt === 'bank_stmt' && p.max_cltv_bs != null) return p.max_cltv_bs;
@@ -821,6 +873,7 @@ function renderTabBar() {
     btn.onclick = () => switchTab(tab.key);
     bar.appendChild(btn);
   });
+  document.getElementById('tab-description').textContent = TAB_DESCRIPTIONS[activeTab] || '';
 }
 
 function switchTab(tabKey) {
@@ -834,6 +887,7 @@ function switchTab(tabKey) {
   });
 
   activeTab = tabKey;
+  clearCompare();
   renderTabBar();
   renderFilters();
   renderCards();
@@ -990,10 +1044,10 @@ function renderCards() {
         io_display: p.io_available === true ? 'Yes' : p.io_available === false ? 'No' : 'Verify',
         terms: p.terms,
         property_types_dscr: p.property_types_dscr || 'Verify',
-        reserves: p.reserves || 'Verify',
-        ppp: p.ppp || 'Verify',
+        reserves: resolveVerify(p.reserves || 'Verify', 'reserves'),
+        ppp: resolveVerify(p.ppp || 'Verify', 'ppp'),
         entity_display: (p.entity_ok === true || s.entity_ok === true) ? 'Yes' : (p.entity_ok === false && s.entity_ok === false) ? 'No' : 'Verify',
-        vacant_rules: p.vacant_rules || 'Verify',
+        vacant_rules: resolveVerify(p.vacant_rules || 'Verify', 'vacant_rules'),
         max_properties_display: p.max_properties ? p.max_properties + '' : 'No limit / Verify',
         state_note: (s.excluded_states && s.excluded_states.length > 0) ? s.excluded_states.join(', ') : 'Check matrix',
         citizenship: s.citizenship_types ? s.citizenship_types.map(c => CIT_LABELS[c]||c).join(', ') : 'Verify',
@@ -1008,15 +1062,15 @@ function renderCards() {
         max_ltv_display: p.max_ltv ? p.max_ltv + '%' : '<span class="check">Check</span>',
         min_fico_bs_display: p.min_fico_bs || s.min_fico || '<span class="check">Check</span>',
         loan_range: loanRange,
-        max_dti: p.max_dti || '<span class="check">Check</span>',
+        max_dti: resolveVerify(p.max_dti || 'Verify', 'max_dti'),
         stmt_months: p.stmt_months || 'Verify',
-        expense_ratio: p.expense_ratio || 'Verify',
+        expense_ratio: resolveVerify(p.expense_ratio || 'Verify', 'expense_ratio'),
         se_display: (p.se_min_years || '2') + ' yr min' + (p.se_min_ownership ? ' / ' + p.se_min_ownership + ' ownership' : ''),
         stmt_types_display: stmtTypes.length > 0 ? stmtTypes.join(' + ') : 'Verify',
         terms: p.terms || 'Verify',
         property_types_bs: p.property_types_bs || 'Verify',
-        reserves: p.reserves || 'Verify',
-        ppp: p.ppp || 'Verify',
+        reserves: resolveVerify(p.reserves || 'Verify', 'reserves'),
+        ppp: resolveVerify(p.ppp || 'Verify', 'ppp'),
         io_display: p.io_available === true ? 'Yes' : p.io_available === false ? 'No' : 'Verify',
         occ_display: Array.isArray(p.occupancy) ? p.occupancy.map(o => OCC_LABELS[o]||o).join(' / ') : (p.occupancy || 'Verify'),
         state_note: (s.excluded_states && s.excluded_states.length > 0) ? s.excluded_states.join(', ') : 'Check matrix',
@@ -1032,14 +1086,14 @@ function renderCards() {
         max_ltv_display: p.max_ltv ? p.max_ltv + '%' : '<span class="check">Check</span>',
         min_fico_fd_display: p.min_fico_fd || s.min_fico || '<span class="check">Check</span>',
         loan_range: loanRange,
-        max_dti: p.max_dti || '<span class="check">Check</span>',
+        max_dti: resolveVerify(p.max_dti || 'Verify', 'max_dti'),
         io_display: p.io_available === true ? 'Yes' : p.io_available === false ? 'No' : 'Verify',
         se_min_display: (p.se_min_years || '2') + ' yr min',
         supported_doc_types_display: sdtDisplay,
         terms: p.terms || 'Verify',
         property_types_fd: p.property_types_fd || 'Verify',
-        reserves: p.reserves || 'Verify',
-        ppp: p.ppp || 'Verify',
+        reserves: resolveVerify(p.reserves || 'Verify', 'reserves'),
+        ppp: resolveVerify(p.ppp || 'Verify', 'ppp'),
         expense_ratio_1099: p.expense_ratio_1099 || null,
         asset_formula: p.asset_formula || null,
         retirement_haircut: p.retirement_haircut || null,
@@ -1053,15 +1107,15 @@ function renderCards() {
       vals = {
         max_ltv_display: p.max_ltv ? p.max_ltv + '%' : '<span class="check">Check</span>',
         loan_range: loanRange,
-        max_dti: p.max_dti || '<span class="check">Check</span>',
+        max_dti: resolveVerify(p.max_dti || 'Verify', 'max_dti'),
         us_credit_display: p.us_credit_required === true ? 'Yes' : p.us_credit_required === false ? 'No' : 'Verify',
-        reserves: p.reserves || 'Verify',
+        reserves: resolveVerify(p.reserves || 'Verify', 'reserves'),
         io_display: p.io_available === true ? 'Yes' : p.io_available === false ? 'No' : 'Verify',
-        visa_types: p.visa_types || 'Verify',
+        visa_types: resolveVerify(p.visa_types || 'Verify', 'visa_types'),
         passport_display: p.passport_required === true ? 'Yes' : p.passport_required === false ? 'No' : 'Verify',
         terms: p.terms || 'Verify',
         property_types_fn: p.property_types_fn || 'Verify',
-        ppp: p.ppp || 'Verify',
+        ppp: resolveVerify(p.ppp || 'Verify', 'ppp'),
         occ_display: Array.isArray(p.occupancy) ? p.occupancy.map(o => OCC_LABELS[o]||o).join(' / ') : (p.occupancy || 'Verify'),
         state_note: (s.excluded_states && s.excluded_states.length > 0) ? s.excluded_states.join(', ') : 'Check matrix',
         guideline_link: p.guideline_url || (l.products.ces ? l.products.ces.guideline_url : null)
@@ -1096,7 +1150,7 @@ function renderCards() {
 
     // Build card HTML
     let html = '';
-    html += '<div class="card-header"><div class="lender-name">' + l.name + '<span class="data-date">' + (l.data_date || '') + '</span></div></div>';
+    html += '<div class="card-header"><div class="lender-name">' + l.name + '<span class="data-date ' + getDateClass(l.data_date) + '">' + (l.data_date || '') + '</span></div><input type="checkbox" class="compare-check" data-idx="' + globalIdx + '" onchange="updateCompare()"></div>';
 
     // Product tag (only if not the default CES label)
     if (activeTab === 'ces') {
@@ -1112,6 +1166,27 @@ function renderCards() {
       html += '<div class="cash-out-amount" id="cashout-amt-' + globalIdx + '">--</div>';
       html += '<div class="cash-out-sub" id="cashout-sub-' + globalIdx + '"></div>';
       html += '</div>';
+    }
+
+    // DSCR estimated payment badge
+    if (activeTab === 'dscr') {
+      const propVal = parseNum(getFilterValue('f-propval'));
+      const loanAmt = parseNum(getFilterValue('f-loanamt'));
+      const dp = p;
+      if (propVal > 0 && loanAmt > 0) {
+        const monthlyPI = calcPmt(0.10, 360, loanAmt);
+        const monthlyTax = propVal * 0.012 / 12;
+        const monthlyIns = 150;
+        const pitia = Math.round(monthlyPI + monthlyTax + monthlyIns);
+        const minDscr = dp.min_dscr || 1.0;
+        const rentNeeded = Math.round(pitia * minDscr);
+        const ltv = ((loanAmt / propVal) * 100).toFixed(1);
+        html += '<div class="cash-out-badge visible">';
+        html += '<div class="cash-out-label">Est. Monthly PITIA</div>';
+        html += '<div class="cash-out-amount">$' + pitia.toLocaleString() + '</div>';
+        html += '<div class="cash-out-sub">' + ltv + '% LTV | Need $' + rentNeeded.toLocaleString() + '/mo rent for ' + minDscr + 'x DSCR</div>';
+        html += '</div>';
+      }
     }
 
     // Card grid fields
@@ -1384,22 +1459,9 @@ function applyCesFilters() {
     results.push({ idx: globalIdx, show: show, cashout: cashout });
   });
 
-  // Sort
+  // Sort by cashout amount (highest first)
   if (hasPV) {
-    results.sort((a, b) => {
-      const aP = LENDERS[a.idx].products.ces;
-      const bP = LENDERS[b.idx].products.ces;
-      const aL = aP ? aP._limited : false;
-      const bL = bP ? bP._limited : false;
-      if (aL !== bL) return aL ? 1 : -1;
-      return b.cashout - a.cashout;
-    });
-  } else {
-    results.sort((a, b) => {
-      const aP = LENDERS[a.idx].products.ces;
-      const bP = LENDERS[b.idx].products.ces;
-      return ((aP && aP._limited) ? 1 : 0) - ((bP && bP._limited) ? 1 : 0);
-    });
+    results.sort((a, b) => b.cashout - a.cashout);
   }
 
   // Reorder DOM and show/hide
@@ -1940,6 +2002,144 @@ function copyScenario() {
     t.classList.add('visible');
     setTimeout(() => t.classList.remove('visible'), 3000);
   });
+}
+
+// ============================================================
+// COMPARE FEATURE
+// ============================================================
+const compareSet = new Set();
+
+function updateCompare() {
+  compareSet.clear();
+  document.querySelectorAll('.compare-check:checked').forEach(cb => {
+    compareSet.add(parseInt(cb.dataset.idx));
+  });
+  // Max 3
+  if (compareSet.size > 3) {
+    const arr = [...compareSet];
+    compareSet.delete(arr[0]);
+    const unchecked = document.querySelector('.compare-check[data-idx="'+arr[0]+'"]');
+    if (unchecked) unchecked.checked = false;
+  }
+  const bar = document.getElementById('compare-bar');
+  const count = compareSet.size;
+  document.getElementById('compare-count').textContent = count + ' selected';
+  bar.classList.toggle('visible', count >= 2);
+}
+
+function clearCompare() {
+  compareSet.clear();
+  document.querySelectorAll('.compare-check').forEach(cb => cb.checked = false);
+  document.getElementById('compare-bar').classList.remove('visible');
+}
+
+function showCompare() {
+  const indices = [...compareSet];
+  const lenders = indices.map(i => LENDERS[i]);
+  const container = document.getElementById('compare-table');
+
+  const tab = activeTab;
+  const rows = [];
+
+  // Common rows for all tabs
+  rows.push({label: 'FICO', key: 'min_fico'});
+  rows.push({label: 'Excluded States', key: 'state_note'});
+  rows.push({label: 'Citizenship', key: 'citizenship'});
+  rows.push({label: 'Credit Event', key: 'credit_event_mo', suffix: ' months'});
+
+  // Tab-specific rows
+  if (tab === 'ces') {
+    rows.unshift({label: 'Max CLTV', key: 'max_cltv', suffix: '%', best: 'max'});
+    rows.push({label: 'Max DTI', key: 'max_dti'});
+    rows.push({label: 'Loan Range', key: '_loan_range'});
+    rows.push({label: 'Doc Types', key: 'doc_note'});
+    rows.push({label: 'IO', key: 'io'});
+    rows.push({label: 'PPP', key: 'ppp'});
+    rows.push({label: 'Terms', key: 'terms'});
+  } else if (tab === 'dscr') {
+    rows.unshift({label: 'Max LTV', key: 'max_ltv', suffix: '%', best: 'max'});
+    rows.unshift({label: 'Min DSCR', key: 'min_dscr', best: 'min'});
+    rows.push({label: 'Loan Range', key: '_loan_range'});
+    rows.push({label: 'STR Allowed', key: 'str_allowed'});
+    rows.push({label: 'IO', key: 'io_available'});
+    rows.push({label: 'Entity (LLC)', key: 'entity_ok'});
+    rows.push({label: 'Terms', key: 'terms'});
+  } else if (tab === 'bank_stmt') {
+    rows.unshift({label: 'Max LTV', key: 'max_ltv', suffix: '%', best: 'max'});
+    rows.push({label: 'Max DTI', key: 'max_dti'});
+    rows.push({label: 'Loan Range', key: '_loan_range'});
+    rows.push({label: 'Statements', key: 'stmt_months'});
+    rows.push({label: 'Expense Ratio', key: 'expense_ratio'});
+    rows.push({label: 'SE Years', key: 'se_min_years'});
+    rows.push({label: 'IO', key: 'io_available'});
+    rows.push({label: 'Terms', key: 'terms'});
+  } else if (tab === 'full_doc') {
+    rows.unshift({label: 'Max LTV', key: 'max_ltv', suffix: '%', best: 'max'});
+    rows.push({label: 'Max DTI', key: 'max_dti'});
+    rows.push({label: 'Loan Range', key: '_loan_range'});
+    rows.push({label: 'IO', key: 'io_available'});
+    rows.push({label: 'SE Min', key: 'se_min_years'});
+    rows.push({label: 'Terms', key: 'terms'});
+  } else if (tab === 'foreign_natl') {
+    rows.unshift({label: 'Max LTV', key: 'max_ltv', suffix: '%', best: 'max'});
+    rows.push({label: 'Max DTI', key: 'max_dti'});
+    rows.push({label: 'Loan Range', key: '_loan_range'});
+    rows.push({label: 'US Credit Required', key: 'us_credit_required'});
+    rows.push({label: 'Reserves', key: 'reserves'});
+    rows.push({label: 'Visa Types', key: 'visa_types'});
+  }
+  rows.push({label: 'Phone', key: '_phone'});
+
+  // Build table
+  var html = '<table><thead><tr><th>Parameter</th>';
+  lenders.forEach(function(l) { html += '<th>' + l.name + '</th>'; });
+  html += '</tr></thead><tbody>';
+
+  rows.forEach(function(row) {
+    html += '<tr><td><strong>' + row.label + '</strong></td>';
+    var values = lenders.map(function(l) {
+      var shared = l.shared || {};
+      var prod = (l.products && l.products[tab]) || {};
+      if (row.key === '_loan_range') {
+        var min = prod.loan_min;
+        var max = prod.loan_max;
+        return (min ? fmt(min) : '?') + ' - ' + (max ? fmt(max) : '?');
+      }
+      if (row.key === '_phone') {
+        return l.phone ? l.phone.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3') : '';
+      }
+      if (row.key === 'min_fico') return shared.min_fico || prod.min_fico_dscr || prod.min_fico_bs || prod.min_fico_fd || prod.min_fico_fn || 'N/A';
+      if (row.key === 'state_note') return prod.state_note || (shared.excluded_states && shared.excluded_states.length > 0 ? shared.excluded_states.join(', ') : 'Check matrix');
+      if (row.key === 'citizenship') return prod.citizenship || (shared.citizenship_types ? shared.citizenship_types.map(function(c){ return CIT_LABELS[c]||c; }).join(', ') : 'Verify');
+      if (row.key === 'credit_event_mo') return shared.credit_event_mo ? shared.credit_event_mo + (row.suffix||'') : 'N/A';
+      var val = prod[row.key] !== undefined ? prod[row.key] : shared[row.key];
+      if (val === true) return 'Yes';
+      if (val === false) return 'No';
+      if (val === null || val === undefined) return 'N/A';
+      return String(val) + (row.suffix || '');
+    });
+
+    // Find best value if applicable
+    var bestIdx = -1;
+    if (row.best) {
+      var nums = values.map(function(v){ return parseFloat(v); });
+      if (row.best === 'max') bestIdx = nums.indexOf(Math.max.apply(null, nums.filter(function(n){ return !isNaN(n); })));
+      if (row.best === 'min') bestIdx = nums.indexOf(Math.min.apply(null, nums.filter(function(n){ return !isNaN(n) && n > 0; })));
+    }
+
+    values.forEach(function(v, i) {
+      html += '<td' + (i === bestIdx ? ' class="best"' : '') + '>' + v + '</td>';
+    });
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  container.innerHTML = html;
+  document.getElementById('compare-overlay').classList.add('visible');
+}
+
+function closeCompare() {
+  document.getElementById('compare-overlay').classList.remove('visible');
 }
 
 // ============================================================
