@@ -146,12 +146,10 @@
 // PRODUCT TABS CONFIG
 // ============================================================
 const PRODUCT_TABS = [
-  { key: "ces", label: "2nd Lien (CES)", icon: "2" },
+  { key: "ces", label: "2nd Lien", icon: "2" },
   { key: "dscr", label: "DSCR", icon: "D" },
   { key: "bank_stmt", label: "Bank Statement", icon: "B" },
-  { key: "full_doc", label: "Full Doc", icon: "F" },
-  { key: "1099", label: "1099", icon: "1" },
-  { key: "asset_depl", label: "Asset Depletion", icon: "A" },
+  { key: "full_doc", label: "Non-QM", icon: "N" },
   { key: "foreign_natl", label: "Foreign National", icon: "FN" }
 ];
 
@@ -227,8 +225,8 @@ const FILTER_CONFIGS = {
       { id: "f-io", label: "Interest-Only", type: "select", options: [
         {v:"",t:"Any"},{v:"yes",t:"IO Required"}
       ]},
-      { id: "f-entity", label: "Entity (LLC)", type: "select", options: [
-        {v:"",t:"Any"},{v:"yes",t:"LLC Required"}
+      { id: "f-entity", label: "Entity (LLC/Corp)", type: "select", options: [
+        {v:"",t:"Any"},{v:"yes",t:"LLC/Corp Required"}
       ]}
     ]
   },
@@ -260,8 +258,8 @@ const FILTER_CONFIGS = {
       { id: "f-io", label: "Interest-Only", type: "select", options: [
         {v:"",t:"Any"},{v:"yes",t:"IO Required"}
       ]},
-      { id: "f-entity", label: "Entity (LLC)", type: "select", options: [
-        {v:"",t:"Any"},{v:"yes",t:"LLC Required"}
+      { id: "f-entity", label: "Entity (LLC/Corp)", type: "select", options: [
+        {v:"",t:"Any"},{v:"yes",t:"LLC/Corp Required"}
       ]}
     ]
   },
@@ -275,6 +273,9 @@ const FILTER_CONFIGS = {
       ]},
       { id: "f-occupancy", label: "Occupancy", type: "select", options: [
         {v:"",t:"Any"},{v:"oo",t:"Owner-Occupied"},{v:"second",t:"2nd Home"},{v:"inv",t:"Investment"}
+      ]},
+      { id: "f-fulldoc-doctype", label: "Doc Type", type: "select", options: [
+        {v:"",t:"Any"},{v:"full_doc",t:"Full Doc"},{v:"1099",t:"1099"},{v:"asset_depl",t:"Asset Depletion"},{v:"p_and_l",t:"P&L Only"},{v:"wvoe",t:"WVOE"}
       ]}
     ],
     secondary: [
@@ -286,60 +287,6 @@ const FILTER_CONFIGS = {
       ]},
       { id: "f-se", label: "Self-Employed", type: "select", options: [
         {v:"",t:"Any"},{v:"1",t:"1 Year OK"}
-      ]},
-      { id: "f-io", label: "Interest-Only", type: "select", options: [
-        {v:"",t:"Any"},{v:"yes",t:"IO Required"}
-      ]},
-      { id: "f-entity", label: "Entity (LLC/Corp)", type: "select", options: [
-        {v:"",t:"Any"},{v:"yes",t:"LLC/Corp Required"}
-      ]}
-    ]
-  },
-  "1099": {
-    primary: [
-      { id: "f-loanamt", label: "Loan Amount", type: "input", inputmode: "numeric", placeholder: "$500,000" },
-      { id: "f-fico", label: "FICO Score", type: "number", placeholder: "680", min: 300, max: 850 },
-      { id: "f-state", label: "State", type: "select", options: "states" },
-      { id: "f-proptype", label: "Property Type", type: "select", options: [
-        {v:"",t:"Any Type"},{v:"sfr",t:"SFR"},{v:"condo_w",t:"Condo (Warrantable)"},{v:"condo_nw",t:"Condo (Non-Warrantable)"},{v:"2_4_unit",t:"2-4 Unit"},{v:"pud",t:"PUD"},{v:"condotel",t:"Condotel"},{v:"mfg",t:"Manufactured Home"},{v:"mixed",t:"Mixed-Use"}
-      ]},
-      { id: "f-occupancy", label: "Occupancy", type: "select", options: [
-        {v:"",t:"Any"},{v:"oo",t:"Owner-Occupied"},{v:"second",t:"2nd Home"},{v:"inv",t:"Investment"}
-      ]}
-    ],
-    secondary: [
-      { id: "f-citizenship", label: "Citizenship", type: "select", options: [
-        {v:"",t:"Any"},{v:"us",t:"US Citizen"},{v:"perm_res",t:"Permanent Resident"},{v:"non_perm",t:"Non-Perm Resident"},{v:"fn",t:"Foreign National"},{v:"itin",t:"ITIN / DACA"}
-      ]},
-      { id: "f-creditevent", label: "Credit Event (BK/FC/SS)", type: "select", options: [
-        {v:"",t:"No Event"},{v:"84",t:"7+ years ago"},{v:"48",t:"4+ years ago"},{v:"24",t:"2+ years ago"}
-      ]},
-      { id: "f-io", label: "Interest-Only", type: "select", options: [
-        {v:"",t:"Any"},{v:"yes",t:"IO Required"}
-      ]},
-      { id: "f-entity", label: "Entity (LLC/Corp)", type: "select", options: [
-        {v:"",t:"Any"},{v:"yes",t:"LLC/Corp Required"}
-      ]}
-    ]
-  },
-  asset_depl: {
-    primary: [
-      { id: "f-loanamt", label: "Loan Amount", type: "input", inputmode: "numeric", placeholder: "$500,000" },
-      { id: "f-fico", label: "FICO Score", type: "number", placeholder: "700", min: 300, max: 850 },
-      { id: "f-state", label: "State", type: "select", options: "states" },
-      { id: "f-proptype", label: "Property Type", type: "select", options: [
-        {v:"",t:"Any Type"},{v:"sfr",t:"SFR"},{v:"condo_w",t:"Condo (Warrantable)"},{v:"condo_nw",t:"Condo (Non-Warrantable)"},{v:"2_4_unit",t:"2-4 Unit"},{v:"pud",t:"PUD"},{v:"condotel",t:"Condotel"},{v:"mfg",t:"Manufactured Home"},{v:"mixed",t:"Mixed-Use"}
-      ]},
-      { id: "f-occupancy", label: "Occupancy", type: "select", options: [
-        {v:"",t:"Any"},{v:"oo",t:"Owner-Occupied"},{v:"second",t:"2nd Home"},{v:"inv",t:"Investment"}
-      ]}
-    ],
-    secondary: [
-      { id: "f-citizenship", label: "Citizenship", type: "select", options: [
-        {v:"",t:"Any"},{v:"us",t:"US Citizen"},{v:"perm_res",t:"Permanent Resident"},{v:"non_perm",t:"Non-Perm Resident"},{v:"fn",t:"Foreign National"},{v:"itin",t:"ITIN / DACA"}
-      ]},
-      { id: "f-creditevent", label: "Credit Event (BK/FC/SS)", type: "select", options: [
-        {v:"",t:"No Event"},{v:"84",t:"7+ years ago"},{v:"48",t:"4+ years ago"},{v:"24",t:"2+ years ago"}
       ]},
       { id: "f-io", label: "Interest-Only", type: "select", options: [
         {v:"",t:"Any"},{v:"yes",t:"IO Required"}
@@ -386,7 +333,7 @@ const CARD_CONFIGS = {
       { label: "Prepay Penalty", key: "ppp_display" },
       { label: "Credit Event Seasoning", key: "credit_event_display" },
       { label: "Max Combined (1st+2nd)", key: "max_combined_display" },
-      { label: "Entity Vesting (LLC)", key: "entity_display" },
+      { label: "Entity Vesting (LLC/Corp)", key: "entity_display" },
       { label: "Terms", key: "terms" },
       { label: "Guidelines", key: "guideline_link", isLink: true }
     ]
@@ -405,7 +352,7 @@ const CARD_CONFIGS = {
       { label: "Property Types", key: "property_types_dscr" },
       { label: "Reserves", key: "reserves" },
       { label: "Prepay Penalty", key: "ppp" },
-      { label: "Entity (LLC)", key: "entity_display" },
+      { label: "Entity (LLC/Corp)", key: "entity_display" },
       { label: "Vacant Rules", key: "vacant_rules" },
       { label: "Max Properties", key: "max_properties_display" },
       { label: "Excluded States", key: "state_note" },
@@ -448,53 +395,14 @@ const CARD_CONFIGS = {
       { label: "SE Min", key: "se_min_display" }
     ],
     detailRows: [
+      { label: "Supported Doc Types", key: "supported_doc_types_display" },
       { label: "Terms", key: "terms" },
       { label: "Property Types", key: "property_types_fd" },
       { label: "Reserves", key: "reserves" },
       { label: "Prepay Penalty", key: "ppp" },
-      { label: "Occupancy", key: "occ_display" },
-      { label: "Excluded States", key: "state_note" },
-      { label: "Citizenship", key: "citizenship" },
-      { label: "Credit Event Seasoning", key: "credit_event_display" },
-      { label: "Guidelines", key: "guideline_link", isLink: true }
-    ]
-  },
-  "1099": {
-    gridFields: [
-      { label: "Max LTV", key: "max_ltv_display" },
-      { label: "Min FICO", key: "min_fico_1099_display" },
-      { label: "Loan Range", key: "loan_range" },
-      { label: "Max DTI", key: "max_dti" },
-      { label: "Expense Ratio", key: "expense_ratio_1099" },
-      { label: "IO Available", key: "io_display" }
-    ],
-    detailRows: [
-      { label: "Terms", key: "terms" },
-      { label: "Property Types", key: "property_types_1099" },
-      { label: "Reserves", key: "reserves" },
-      { label: "Prepay Penalty", key: "ppp" },
-      { label: "SE Years Required", key: "se_min_display" },
-      { label: "Occupancy", key: "occ_display" },
-      { label: "Excluded States", key: "state_note" },
-      { label: "Citizenship", key: "citizenship" },
-      { label: "Credit Event Seasoning", key: "credit_event_display" },
-      { label: "Guidelines", key: "guideline_link", isLink: true }
-    ]
-  },
-  asset_depl: {
-    gridFields: [
-      { label: "Max LTV", key: "max_ltv_display" },
-      { label: "Min FICO", key: "min_fico_ad_display" },
-      { label: "Loan Range", key: "loan_range" },
-      { label: "Asset Formula", key: "asset_formula" },
-      { label: "Retirement Haircut", key: "retirement_haircut" },
-      { label: "IO Available", key: "io_display" }
-    ],
-    detailRows: [
-      { label: "Terms", key: "terms" },
-      { label: "Property Types", key: "property_types_ad" },
-      { label: "Reserves", key: "reserves" },
-      { label: "Prepay Penalty", key: "ppp" },
+      { label: "1099 Expense Ratio", key: "expense_ratio_1099", conditional: true },
+      { label: "Asset Formula", key: "asset_formula", conditional: true },
+      { label: "Retirement Haircut", key: "retirement_haircut", conditional: true },
       { label: "Occupancy", key: "occ_display" },
       { label: "Excluded States", key: "state_note" },
       { label: "Citizenship", key: "citizenship" },
@@ -530,7 +438,7 @@ const CARD_CONFIGS = {
 const LENDERS = [
   {
     name: "A&D Mortgage", phone: "8552356267", website: "https://www.admortgage.com", data_date: "Sep 2025",
-    product_keys: ["ces","dscr","bank_stmt","full_doc","1099","asset_depl","foreign_natl"],
+    product_keys: ["ces","dscr","bank_stmt","full_doc","foreign_natl"],
     shared: { min_fico: 660, excluded_states: [], excluded_states_conditional: {"TX":"Cannot do owner-occupied"}, citizenship_types: ["us","perm_res","non_perm","fn","itin"], property_types: ["sfr","condo_w","condo_nw","condotel","2_4_unit","pud","mfg","mixed"], credit_event_mo: 48, housing_req: "0x30x12", entity_ok: true },
     products: {
       ces: {
@@ -544,13 +452,11 @@ const LENDERS = [
         max_ltv: 90, max_ltv_cashout: 85, loan_min: 100000, loan_max: 3000000, min_fico_bs: 660, max_dti: "50% (US) / 43% (FN)", stmt_months: "12 or 24", personal_ok: true, business_ok: true, expense_ratio: "50% standard; <50% w/ CPA", se_min_years: 2, se_min_ownership: "25%", occupancy: ["oo","second","inv"], io_available: true, property_types_bs: "SFR, 2-4 unit, Condo (W/NW), Condotel, PUD, Mixed Use", terms: "30yr Fixed, 40/10 ARM", reserves: "Per matrix", ppp: "Prohibited OO/2nd; Inv 6mo-5yr", guideline_url: null
       },
       full_doc: {
-        max_ltv: 90, max_ltv_cashout: 85, loan_min: 100000, loan_max: 3000000, min_fico_fd: 660, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: true, property_types_fd: "SFR, 2-4 unit, Condo (W/NW), Condotel, PUD, Mixed Use", terms: "30yr Fixed, ARM", reserves: "Per matrix", ppp: "Prohibited OO/2nd; Inv 6mo-5yr"
-      },
-      "1099": {
-        max_ltv: 90, max_ltv_cashout: 85, loan_min: 100000, loan_max: 3000000, min_fico_1099: 660, max_dti: "50%", expense_ratio_1099: "10%", se_min_years: 2, occupancy: ["oo","second","inv"], io_available: true, terms: "30yr Fixed, ARM", property_types_1099: "SFR, 2-4 unit, Condo (W/NW), PUD", ppp: "Prohibited OO/2nd; Inv 6mo-5yr"
-      },
-      asset_depl: {
-        max_ltv: 80, loan_min: 100000, loan_max: 3000000, min_fico_ad: 680, max_dti: "N/A", asset_formula: "Net qualified assets / 60mo", retirement_haircut: "70%", occupancy: ["oo","second","inv"], io_available: true, terms: "30yr Fixed, ARM", property_types_ad: "SFR, 2-4 unit, Condo, PUD", ppp: "Prohibited OO/2nd; Inv only"
+        max_ltv: 90, max_ltv_cashout: 85, loan_min: 100000, loan_max: 3000000, min_fico_fd: 660, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: true, property_types_fd: "SFR, 2-4 unit, Condo (W/NW), Condotel, PUD, Mixed Use", terms: "30yr Fixed, ARM", reserves: "Per matrix", ppp: "Prohibited OO/2nd; Inv 6mo-5yr",
+        supported_doc_types: ["full_doc","1099","asset_depl","p_and_l","wvoe"],
+        expense_ratio_1099: "10%",
+        asset_formula: "Net qualified assets / 60mo",
+        retirement_haircut: "70%"
       },
       foreign_natl: {
         max_ltv: 75, loan_min: 100000, loan_max: 2000000, min_fico_fn: null, max_dti: "43%", us_credit_required: false, passport_required: true, visa_types: "Any (inv only)", occupancy: ["inv"], io_available: false, terms: "30yr Fixed", property_types_fn: "SFR, 2-4 unit, Condo, PUD", reserves: "12mo", ppp: "Inv 6mo-5yr"
@@ -559,7 +465,7 @@ const LENDERS = [
   },
   {
     name: "AAA Lendings", phone: "8777898816", website: "https://www.aaalendings.com", data_date: "Dec 2025",
-    product_keys: ["ces","dscr","bank_stmt","full_doc","1099","asset_depl","foreign_natl"],
+    product_keys: ["ces","dscr","bank_stmt","full_doc","foreign_natl"],
     shared: { min_fico: 660, excluded_states: [], excluded_states_conditional: {"FL":"Min FICO 720 for condos","NJ":"Min FICO 720 for condos"}, citizenship_types: ["us","perm_res","non_perm"], property_types: ["sfr","pud","condo_w","2_4_unit"], credit_event_mo: 48, housing_req: "0x30x12", entity_ok: true },
     products: {
       ces: {
@@ -573,13 +479,11 @@ const LENDERS = [
         max_ltv: 90, max_ltv_cashout: 80, loan_min: 150000, loan_max: 3500000, min_fico_bs: 660, max_dti: "53%", stmt_months: "12 or 24", personal_ok: true, business_ok: true, expense_ratio: "50% standard; 20% min w/ CPA", se_min_years: 2, se_min_ownership: "25%", occupancy: ["oo","second","inv"], io_available: true, property_types_bs: "SFR, 2-4 unit, PUD, Warr Condo", terms: "30yr Fixed, 5/6 ARM, 7/6 ARM, IO", reserves: "6-12mo by loan amt", ppp: "Prohibited OO/2nd; Inv required", guideline_url: null
       },
       full_doc: {
-        max_ltv: 90, max_ltv_cashout: 80, loan_min: 150000, loan_max: 3500000, min_fico_fd: 660, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: true, property_types_fd: "SFR, 2-4 unit, PUD, Warr Condo", terms: "30yr Fixed, 5/6 ARM, 7/6 ARM, IO", reserves: "6-12mo by loan amt", ppp: "Prohibited OO/2nd; Inv required"
-      },
-      "1099": {
-        max_ltv: 85, max_ltv_cashout: 75, loan_min: 150000, loan_max: 2500000, min_fico_1099: 680, max_dti: "50%", expense_ratio_1099: "10%", se_min_years: 2, occupancy: ["oo","second","inv"], io_available: true, terms: "30yr Fixed, ARM, IO", property_types_1099: "SFR, 2-4 unit, PUD, Condo", ppp: "Inv required"
-      },
-      asset_depl: {
-        max_ltv: 80, loan_min: 150000, loan_max: 2000000, min_fico_ad: 700, max_dti: "N/A", asset_formula: "Per matrix", retirement_haircut: "70%", occupancy: ["oo","second","inv"], io_available: true, terms: "30yr Fixed, ARM, IO", property_types_ad: "SFR, PUD, Condo", ppp: "Inv required"
+        max_ltv: 90, max_ltv_cashout: 80, loan_min: 150000, loan_max: 3500000, min_fico_fd: 660, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: true, property_types_fd: "SFR, 2-4 unit, PUD, Warr Condo", terms: "30yr Fixed, 5/6 ARM, 7/6 ARM, IO", reserves: "6-12mo by loan amt", ppp: "Prohibited OO/2nd; Inv required",
+        supported_doc_types: ["full_doc","1099","asset_depl","p_and_l","wvoe"],
+        expense_ratio_1099: "10%",
+        asset_formula: "Per matrix",
+        retirement_haircut: "70%"
       },
       foreign_natl: {
         max_ltv: 70, loan_min: 150000, loan_max: 2000000, min_fico_fn: null, max_dti: "38%", us_credit_required: false, passport_required: true, visa_types: "Any (no F1/F2)", occupancy: ["second","inv"], io_available: false, terms: "30yr Fixed, ARM", property_types_fn: "SFR, 2-4 unit, PUD, Condo", reserves: "12mo", ppp: "Verify"
@@ -602,7 +506,8 @@ const LENDERS = [
         max_ltv: 90, max_ltv_cashout: 80, loan_min: 100000, loan_max: 2500000, min_fico_bs: 660, max_dti: "50%", stmt_months: "12 or 24", personal_ok: true, business_ok: true, expense_ratio: "Verify", se_min_years: 2, se_min_ownership: "25%", occupancy: ["oo","second","inv"], io_available: true, property_types_bs: "SFR, 2-4 unit, Condo", terms: "30yr Fixed, ARM", reserves: "Verify", ppp: "Verify", guideline_url: null
       },
       full_doc: {
-        max_ltv: 90, max_ltv_cashout: 80, loan_min: 100000, loan_max: 2500000, min_fico_fd: 660, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: true, property_types_fd: "SFR, 2-4 unit, Condo", terms: "30yr Fixed, ARM", reserves: "Verify", ppp: "Verify"
+        max_ltv: 90, max_ltv_cashout: 80, loan_min: 100000, loan_max: 2500000, min_fico_fd: 660, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: true, property_types_fd: "SFR, 2-4 unit, Condo", terms: "30yr Fixed, ARM", reserves: "Verify", ppp: "Verify",
+        supported_doc_types: ["full_doc","p_and_l","wvoe"]
       },
       foreign_natl: {
         max_ltv: 75, loan_min: 100000, loan_max: 1500000, min_fico_fn: null, max_dti: "Verify", us_credit_required: false, passport_required: true, visa_types: "Verify", occupancy: ["inv"], io_available: false, terms: "30yr Fixed", property_types_fn: "SFR, Condo", reserves: "Verify", ppp: "Verify"
@@ -647,13 +552,14 @@ const LENDERS = [
         max_ltv: 90, max_ltv_cashout: 80, loan_min: 100000, loan_max: 2500000, min_fico_bs: 660, max_dti: "50%", stmt_months: "12", personal_ok: true, business_ok: true, expense_ratio: "Per P&L or 3rd party", se_min_years: 2, se_min_ownership: "50% for business BS", occupancy: ["oo","second","inv"], io_available: true, property_types_bs: "SFR, 2-4 unit, Condo, NW Condo", terms: "30/40yr Fixed, 5/6 ARM, IO", reserves: "Verify", ppp: "Verify", guideline_url: null
       },
       full_doc: {
-        max_ltv: 90, max_ltv_cashout: 80, loan_min: 100000, loan_max: 2500000, min_fico_fd: 660, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: true, property_types_fd: "SFR, 2-4 unit, Condo, NW Condo", terms: "30/40yr Fixed, ARM, IO", reserves: "Verify", ppp: "Verify"
+        max_ltv: 90, max_ltv_cashout: 80, loan_min: 100000, loan_max: 2500000, min_fico_fd: 660, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: true, property_types_fd: "SFR, 2-4 unit, Condo, NW Condo", terms: "30/40yr Fixed, ARM, IO", reserves: "Verify", ppp: "Verify",
+        supported_doc_types: ["full_doc","1099","p_and_l","wvoe"]
       }
     }
   },
   {
     name: "Forward Lending", phone: "8553699269", website: "https://forwardlendingmtg.com", data_date: "Jan 2026",
-    product_keys: ["ces","bank_stmt","full_doc","1099"],
+    product_keys: ["ces","bank_stmt","full_doc"],
     shared: { min_fico: 660, excluded_states: ["MI","NJ","NY","TN","TX","WV"], excluded_states_conditional: {}, citizenship_types: ["us","perm_res","non_perm","itin"], property_types: ["sfr","condo_w","condo_nw","2_4_unit","pud"], credit_event_mo: 48, housing_req: "0x30x12", entity_ok: false },
     products: {
       ces: {
@@ -664,16 +570,15 @@ const LENDERS = [
         max_ltv: 90, max_ltv_cashout: 85, loan_min: 75000, loan_max: 2500000, min_fico_bs: 660, max_dti: "50% (<=80 CLTV) / 45% (>80)", stmt_months: "12", personal_ok: true, business_ok: true, expense_ratio: "Per program", se_min_years: 1, se_min_ownership: "25%", occupancy: ["oo","second","inv"], io_available: false, property_types_bs: "SFR, 2-4 unit, Condo (W/NW), PUD", terms: "10/20/30yr Fixed", reserves: "Per 1st lien", ppp: "Verify", guideline_url: null
       },
       full_doc: {
-        max_ltv: 90, max_ltv_cashout: 85, loan_min: 75000, loan_max: 2500000, min_fico_fd: 660, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: false, property_types_fd: "SFR, 2-4 unit, Condo, PUD", terms: "30yr Fixed", reserves: "Per 1st lien", ppp: "Verify"
-      },
-      "1099": {
-        max_ltv: 85, max_ltv_cashout: 80, loan_min: 75000, loan_max: 2000000, min_fico_1099: 660, max_dti: "50%", expense_ratio_1099: "10%", se_min_years: 2, occupancy: ["oo","second","inv"], io_available: false, terms: "30yr Fixed", property_types_1099: "SFR, 2-4 unit, Condo, PUD", ppp: "Verify"
+        max_ltv: 90, max_ltv_cashout: 85, loan_min: 75000, loan_max: 2500000, min_fico_fd: 660, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: false, property_types_fd: "SFR, 2-4 unit, Condo, PUD", terms: "30yr Fixed", reserves: "Per 1st lien", ppp: "Verify",
+        supported_doc_types: ["full_doc","1099","p_and_l","wvoe"],
+        expense_ratio_1099: "10%"
       }
     }
   },
   {
     name: "FundLoans", phone: "8776719842", website: "https://www.fundloans.com", data_date: "Sep 2025",
-    product_keys: ["ces","dscr","bank_stmt","full_doc","1099","asset_depl"],
+    product_keys: ["ces","dscr","bank_stmt","full_doc"],
     shared: { min_fico: 680, excluded_states: [], excluded_states_conditional: {}, citizenship_types: ["us","perm_res","non_perm"], property_types: ["sfr","pud","2_4_unit","condo_w"], credit_event_mo: 48, housing_req: "0x30x12", entity_ok: true },
     products: {
       ces: {
@@ -688,19 +593,17 @@ const LENDERS = [
         max_ltv: 90, max_ltv_cashout: 80, loan_min: 150000, loan_max: 2500000, min_fico_bs: 680, max_dti: "50%", stmt_months: "12 or 24", personal_ok: true, business_ok: true, expense_ratio: "50% standard; 20% min w/ CPA", se_min_years: 2, se_min_ownership: "25%", occupancy: ["oo","second","inv"], io_available: true, property_types_bs: "SFR, 2-4 unit, Warr Condo, PUD, Rural (OO)", terms: "30yr Fixed, 5/6 ARM, IO, Balloon", reserves: "Per matrix", ppp: "Verify", guideline_url: null
       },
       full_doc: {
-        max_ltv: 90, max_ltv_cashout: 80, loan_min: 150000, loan_max: 2500000, min_fico_fd: 680, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: true, property_types_fd: "SFR, 2-4 unit, Warr Condo, PUD", terms: "30yr Fixed, ARM, IO", reserves: "Per matrix", ppp: "Verify"
-      },
-      "1099": {
-        max_ltv: 85, max_ltv_cashout: 80, loan_min: 150000, loan_max: 2000000, min_fico_1099: 680, max_dti: "50%", expense_ratio_1099: "10%", se_min_years: 2, occupancy: ["oo","second","inv"], io_available: true, terms: "30yr Fixed, ARM, IO", property_types_1099: "SFR, 2-4 unit, Warr Condo, PUD", ppp: "Verify"
-      },
-      asset_depl: {
-        max_ltv: 80, loan_min: 200000, loan_max: 2000000, min_fico_ad: 700, max_dti: "N/A", asset_formula: "Net assets / 84mo", retirement_haircut: "80%", occupancy: ["oo","second","inv"], io_available: true, terms: "30yr Fixed, ARM", property_types_ad: "SFR, 2-4 unit, Warr Condo, PUD", ppp: "Verify"
+        max_ltv: 90, max_ltv_cashout: 80, loan_min: 150000, loan_max: 2500000, min_fico_fd: 680, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: true, property_types_fd: "SFR, 2-4 unit, Warr Condo, PUD", terms: "30yr Fixed, ARM, IO", reserves: "Per matrix", ppp: "Verify",
+        supported_doc_types: ["full_doc","1099","asset_depl","p_and_l","wvoe"],
+        expense_ratio_1099: "10%",
+        asset_formula: "Net assets / 84mo",
+        retirement_haircut: "80%"
       }
     }
   },
   {
     name: "GIANT Lending (fka JET Advantage)", phone: "8772235766", website: "https://www.thegiantlending.com/non-qm-seconds/", data_date: "Jan 2026",
-    product_keys: ["ces","bank_stmt","full_doc","1099"],
+    product_keys: ["ces","bank_stmt","full_doc"],
     shared: { min_fico: 660, excluded_states: ["MI","NJ","NY","TN","TX","WV"], excluded_states_conditional: {}, citizenship_types: ["us","perm_res","non_perm","itin"], property_types: ["sfr","condo_w","condo_nw","2_4_unit","pud"], credit_event_mo: 48, housing_req: "0x30x12", entity_ok: false },
     products: {
       ces: {
@@ -711,16 +614,15 @@ const LENDERS = [
         max_ltv: 90, max_ltv_cashout: 85, loan_min: 75000, loan_max: 2500000, min_fico_bs: 660, max_dti: "50% (<=80 CLTV) / 45% (>80)", stmt_months: "12", personal_ok: true, business_ok: true, expense_ratio: "Per program", se_min_years: 1, se_min_ownership: "25%", occupancy: ["oo","second","inv"], io_available: false, property_types_bs: "SFR, 2-4 unit, Condo (W/NW), PUD", terms: "10/20/30yr Fixed", reserves: "Per 1st lien", ppp: "Verify", guideline_url: null
       },
       full_doc: {
-        max_ltv: 90, max_ltv_cashout: 85, loan_min: 75000, loan_max: 2500000, min_fico_fd: 660, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: false, property_types_fd: "SFR, 2-4 unit, Condo, PUD", terms: "30yr Fixed", reserves: "Per 1st lien", ppp: "Verify"
-      },
-      "1099": {
-        max_ltv: 85, max_ltv_cashout: 80, loan_min: 75000, loan_max: 2000000, min_fico_1099: 660, max_dti: "50%", expense_ratio_1099: "10%", se_min_years: 2, occupancy: ["oo","second","inv"], io_available: false, terms: "30yr Fixed", property_types_1099: "SFR, 2-4 unit, Condo, PUD", ppp: "Verify"
+        max_ltv: 90, max_ltv_cashout: 85, loan_min: 75000, loan_max: 2500000, min_fico_fd: 660, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: false, property_types_fd: "SFR, 2-4 unit, Condo, PUD", terms: "30yr Fixed", reserves: "Per 1st lien", ppp: "Verify",
+        supported_doc_types: ["full_doc","1099","p_and_l","wvoe"],
+        expense_ratio_1099: "10%"
       }
     }
   },
   {
     name: "LoanStream Wholesale", phone: "8007601833", website: "https://loanstreamwholesale.com", data_date: "Jan 2026",
-    product_keys: ["ces","bank_stmt","full_doc","1099"],
+    product_keys: ["ces","bank_stmt","full_doc"],
     shared: { min_fico: 660, excluded_states: ["MI","NJ","NY","TN","TX","WV"], excluded_states_conditional: {}, citizenship_types: ["us","perm_res","non_perm","itin"], property_types: ["sfr","condo_w","condo_nw","2_4_unit","pud"], credit_event_mo: 48, housing_req: "0x30x12", entity_ok: false },
     products: {
       ces: {
@@ -731,16 +633,15 @@ const LENDERS = [
         max_ltv: 90, max_ltv_cashout: 85, loan_min: 75000, loan_max: 2500000, min_fico_bs: 660, max_dti: "50% (<=80 CLTV) / 45% (>80)", stmt_months: "12", personal_ok: true, business_ok: true, expense_ratio: "Per program", se_min_years: 1, se_min_ownership: "25%", occupancy: ["oo","second","inv"], io_available: false, property_types_bs: "SFR, 2-4 unit, Condo (W/NW), PUD", terms: "10/20/30yr Fixed", reserves: "Per 1st lien", ppp: "Verify", guideline_url: null
       },
       full_doc: {
-        max_ltv: 90, max_ltv_cashout: 85, loan_min: 75000, loan_max: 2500000, min_fico_fd: 660, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: false, property_types_fd: "SFR, 2-4 unit, Condo, PUD", terms: "30yr Fixed", reserves: "Per 1st lien", ppp: "Verify"
-      },
-      "1099": {
-        max_ltv: 85, max_ltv_cashout: 80, loan_min: 75000, loan_max: 2000000, min_fico_1099: 660, max_dti: "50%", expense_ratio_1099: "10%", se_min_years: 2, occupancy: ["oo","second","inv"], io_available: false, terms: "30yr Fixed", property_types_1099: "SFR, 2-4 unit, Condo, PUD", ppp: "Verify"
+        max_ltv: 90, max_ltv_cashout: 85, loan_min: 75000, loan_max: 2500000, min_fico_fd: 660, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: false, property_types_fd: "SFR, 2-4 unit, Condo, PUD", terms: "30yr Fixed", reserves: "Per 1st lien", ppp: "Verify",
+        supported_doc_types: ["full_doc","1099","p_and_l","wvoe"],
+        expense_ratio_1099: "10%"
       }
     }
   },
   {
     name: "NQM Funding", phone: "8664352562", website: "https://www.nqmf.com/flex-second-lien/", data_date: "Nov 2024",
-    product_keys: ["ces","dscr","bank_stmt","full_doc","1099","asset_depl","foreign_natl"],
+    product_keys: ["ces","dscr","bank_stmt","full_doc","foreign_natl"],
     shared: { min_fico: 680, excluded_states: ["MS","NJ","NY","TN","TX"], excluded_states_conditional: {}, citizenship_types: ["us","perm_res","non_perm"], property_types: ["sfr","condo_w","condo_nw","pud"], credit_event_mo: 48, housing_req: "0x30x24", entity_ok: null },
     products: {
       ces: {
@@ -754,13 +655,11 @@ const LENDERS = [
         max_ltv: 90, max_ltv_cashout: 85, loan_min: 100000, loan_max: 3000000, min_fico_bs: 660, max_dti: "50% (55% Select Prime w/ compensating)", stmt_months: "12 or 24", personal_ok: true, business_ok: true, expense_ratio: "50% standard; 10% min w/ CPA", se_min_years: 2, se_min_ownership: "25% (20% personal)", occupancy: ["oo","second","inv"], io_available: true, property_types_bs: "SFR, 2-4 unit, Condo, PUD", terms: "15/30/40yr Fixed, 5/6/7/6 ARM, IO", reserves: "Per matrix", ppp: "Prohibited OO/2nd; Inv only", guideline_url: null
       },
       full_doc: {
-        max_ltv: 90, max_ltv_cashout: 85, loan_min: 100000, loan_max: 3000000, min_fico_fd: 660, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: true, property_types_fd: "SFR, 2-4 unit, Condo, PUD", terms: "15/30/40yr Fixed, 5/6 ARM, IO", reserves: "Per matrix", ppp: "Prohibited OO/2nd; Inv only"
-      },
-      "1099": {
-        max_ltv: 90, max_ltv_cashout: 85, loan_min: 100000, loan_max: 3000000, min_fico_1099: 660, max_dti: "50%", expense_ratio_1099: "10%", se_min_years: 2, occupancy: ["oo","second","inv"], io_available: true, terms: "15/30/40yr Fixed, ARM, IO", property_types_1099: "SFR, 2-4 unit, Condo, PUD", ppp: "Prohibited OO/2nd"
-      },
-      asset_depl: {
-        max_ltv: 80, loan_min: 100000, loan_max: 2000000, min_fico_ad: 700, max_dti: "N/A", asset_formula: "Per matrix", retirement_haircut: "Per matrix", occupancy: ["oo","second"], io_available: false, terms: "30yr Fixed, ARM", property_types_ad: "SFR, 2-4 unit, Condo, PUD", ppp: "Prohibited OO/2nd"
+        max_ltv: 90, max_ltv_cashout: 85, loan_min: 100000, loan_max: 3000000, min_fico_fd: 660, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: true, property_types_fd: "SFR, 2-4 unit, Condo, PUD", terms: "15/30/40yr Fixed, 5/6 ARM, IO", reserves: "Per matrix", ppp: "Prohibited OO/2nd; Inv only",
+        supported_doc_types: ["full_doc","1099","asset_depl","p_and_l","wvoe"],
+        expense_ratio_1099: "10%",
+        asset_formula: "Per matrix",
+        retirement_haircut: "Per matrix"
       },
       foreign_natl: {
         max_ltv: 75, loan_min: 100000, loan_max: 2000000, min_fico_fn: null, max_dti: "N/A (DSCR based)", us_credit_required: false, passport_required: true, visa_types: "Any", occupancy: ["inv"], io_available: true, terms: "30yr Fixed, ARM, IO", property_types_fn: "SFR, 2-4 unit, Condo, Condotel", reserves: "12mo", ppp: "Required"
@@ -769,7 +668,7 @@ const LENDERS = [
   },
   {
     name: "Nations Direct (NDM)", phone: "8667623940", website: "https://www.nationsdirectmortgage.com", data_date: "Mar 2026",
-    product_keys: ["ces","dscr","bank_stmt","full_doc","1099"],
+    product_keys: ["ces","dscr","bank_stmt","full_doc"],
     shared: { min_fico: 660, excluded_states: ["AK","DE","HI","IA","MS","ND","NE","NM","NY","SD","TN","TX","VT","WY"], excluded_states_conditional: {}, citizenship_types: ["us","perm_res","non_perm"], property_types: ["sfr","condo_w","2_4_unit","pud"], credit_event_mo: 48, housing_req: "0x30x12", entity_ok: false },
     products: {
       ces: {
@@ -783,16 +682,15 @@ const LENDERS = [
         max_ltv: 90, max_ltv_cashout: 80, loan_min: 75000, loan_max: 2000000, min_fico_bs: 660, max_dti: "50%", stmt_months: "12", personal_ok: true, business_ok: true, expense_ratio: "50% standard; 10% min w/ CPA", se_min_years: 2, se_min_ownership: "25%", occupancy: ["oo","second","inv"], io_available: true, property_types_bs: "SFR, 2-4 unit, Condo, PUD", terms: "30yr Fixed, 40yr Fixed IO", reserves: "Per matrix", ppp: "Required where allowed", guideline_url: null
       },
       full_doc: {
-        max_ltv: 90, max_ltv_cashout: 85, loan_min: 75000, loan_max: 2000000, min_fico_fd: 660, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: true, property_types_fd: "SFR, 2-4 unit, Condo, PUD", terms: "30yr Fixed, 40yr IO", reserves: "Per matrix", ppp: "Required where allowed"
-      },
-      "1099": {
-        max_ltv: 90, max_ltv_cashout: 80, loan_min: 75000, loan_max: 2000000, min_fico_1099: 660, max_dti: "50%", expense_ratio_1099: "10%", se_min_years: 2, occupancy: ["oo","second","inv"], io_available: true, terms: "30yr Fixed, 40yr IO", property_types_1099: "SFR, 2-4 unit, Condo, PUD", ppp: "Required"
+        max_ltv: 90, max_ltv_cashout: 85, loan_min: 75000, loan_max: 2000000, min_fico_fd: 660, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: true, property_types_fd: "SFR, 2-4 unit, Condo, PUD", terms: "30yr Fixed, 40yr IO", reserves: "Per matrix", ppp: "Required where allowed",
+        supported_doc_types: ["full_doc","1099","p_and_l","wvoe"],
+        expense_ratio_1099: "10%"
       }
     }
   },
   {
     name: "Oaktree Funding", phone: "8009685773", website: "https://nonqmexpert.com", data_date: "Jan 2026",
-    product_keys: ["ces","dscr","bank_stmt","full_doc","1099","asset_depl","foreign_natl"],
+    product_keys: ["ces","dscr","bank_stmt","full_doc","foreign_natl"],
     shared: { min_fico: 660, excluded_states: ["TN","TX"], excluded_states_conditional: {}, citizenship_types: ["us","perm_res"], property_types: ["sfr","condo_w","2_4_unit","pud"], credit_event_mo: 48, housing_req: "0x30x12", entity_ok: false },
     products: {
       ces: {
@@ -806,13 +704,11 @@ const LENDERS = [
         max_ltv: 90, max_ltv_cashout: 80, loan_min: 150000, loan_max: 3000000, min_fico_bs: 620, max_dti: "50%", stmt_months: "12 or 24", personal_ok: true, business_ok: true, expense_ratio: "50% standard; per CPA", se_min_years: 2, se_min_ownership: "25%", occupancy: ["oo","second","inv"], io_available: true, property_types_bs: "SFR, 2-4 unit, Condo, NW Condo, Rural", terms: "15/30/40yr Fixed, 5/6/7/6/10/6 ARM, IO", reserves: "3-12mo by loan amt", ppp: "Verify", guideline_url: null
       },
       full_doc: {
-        max_ltv: 90, max_ltv_cashout: 80, loan_min: 150000, loan_max: 4000000, min_fico_fd: 620, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: true, property_types_fd: "SFR, 2-4 unit, Condo, NW Condo, Rural", terms: "15/30/40yr Fixed, ARM, IO", reserves: "3-12mo by loan amt", ppp: "Verify"
-      },
-      "1099": {
-        max_ltv: 85, max_ltv_cashout: 80, loan_min: 150000, loan_max: 3000000, min_fico_1099: 660, max_dti: "50%", expense_ratio_1099: "10%", se_min_years: 2, occupancy: ["oo","second","inv"], io_available: true, terms: "30yr Fixed, ARM", property_types_1099: "SFR, 2-4 unit, Condo", ppp: "Verify"
-      },
-      asset_depl: {
-        max_ltv: 80, loan_min: 150000, loan_max: 3000000, min_fico_ad: 680, max_dti: "N/A", asset_formula: "Per program", retirement_haircut: "70%", occupancy: ["oo","second","inv"], io_available: true, terms: "30yr Fixed, ARM, IO", property_types_ad: "SFR, 2-4 unit, Condo", ppp: "Verify"
+        max_ltv: 90, max_ltv_cashout: 80, loan_min: 150000, loan_max: 4000000, min_fico_fd: 620, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: true, property_types_fd: "SFR, 2-4 unit, Condo, NW Condo, Rural", terms: "15/30/40yr Fixed, ARM, IO", reserves: "3-12mo by loan amt", ppp: "Verify",
+        supported_doc_types: ["full_doc","1099","asset_depl","p_and_l","wvoe"],
+        expense_ratio_1099: "10%",
+        asset_formula: "Per program",
+        retirement_haircut: "70%"
       },
       foreign_natl: {
         max_ltv: 70, loan_min: 150000, loan_max: 2000000, min_fico_fn: null, max_dti: "N/A (DSCR)", us_credit_required: false, passport_required: true, visa_types: "Any", occupancy: ["inv","second"], io_available: true, terms: "30yr Fixed, ARM", property_types_fn: "SFR, 2-4 unit, Condo", reserves: "12mo", ppp: "Verify"
@@ -832,7 +728,7 @@ const LENDERS = [
   },
   {
     name: "Verus Mortgage Capital", phone: "8338623863", website: "https://www.verusmc.com", data_date: "Nov 2024",
-    product_keys: ["ces","dscr","bank_stmt","full_doc","1099","asset_depl","foreign_natl"],
+    product_keys: ["ces","dscr","bank_stmt","full_doc","foreign_natl"],
     shared: { min_fico: 680, excluded_states: ["TX"], excluded_states_conditional: {}, citizenship_types: ["us","perm_res","non_perm"], property_types: ["sfr","condo_w","2_4_unit","pud"], credit_event_mo: 48, housing_req: "0x30x12", entity_ok: false },
     products: {
       ces: {
@@ -846,13 +742,11 @@ const LENDERS = [
         max_ltv: 90, max_ltv_cashout: 80, loan_min: 150000, loan_max: 4000000, min_fico_bs: 660, max_dti: "50%", stmt_months: "12 or 24", personal_ok: true, business_ok: true, expense_ratio: "50% standard; 10% min w/ CPA", se_min_years: 2, se_min_ownership: "20% personal / 25% business", occupancy: ["oo","second","inv"], io_available: true, property_types_bs: "SFR, 2-4 unit, Condo, NW Condo, Condotel, PUD", terms: "15/30/40yr Fixed, 5/6/7/6/10/6 ARM, IO", reserves: "6mo (LTV<=85%); 12mo (LTV>85%); 9mo (>1.5M)", ppp: "Inv only where allowed", guideline_url: null
       },
       full_doc: {
-        max_ltv: 90, max_ltv_cashout: 80, loan_min: 150000, loan_max: 4000000, min_fico_fd: 660, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: true, property_types_fd: "SFR, 2-4 unit, Condo, NW Condo, PUD", terms: "15/30/40yr Fixed, ARM, IO", reserves: "6-12mo by LTV and loan amt", ppp: "Inv only where allowed"
-      },
-      "1099": {
-        max_ltv: 90, max_ltv_cashout: 80, loan_min: 150000, loan_max: 4000000, min_fico_1099: 660, max_dti: "50%", expense_ratio_1099: "10%", se_min_years: 2, occupancy: ["oo","second","inv"], io_available: true, terms: "15/30/40yr Fixed, ARM, IO", property_types_1099: "SFR, 2-4 unit, Condo, PUD", ppp: "Inv only"
-      },
-      asset_depl: {
-        max_ltv: 80, loan_min: 150000, loan_max: 3000000, min_fico_ad: 680, max_dti: "N/A (asset based)", asset_formula: "Net assets / 60 months", retirement_haircut: "70%", occupancy: ["oo","second","inv"], io_available: true, terms: "15/30/40yr Fixed, ARM, IO", property_types_ad: "SFR, 2-4 unit, Condo, PUD", ppp: "Inv only"
+        max_ltv: 90, max_ltv_cashout: 80, loan_min: 150000, loan_max: 4000000, min_fico_fd: 660, max_dti: "50%", se_min_years: 1, occupancy: ["oo","second","inv"], io_available: true, property_types_fd: "SFR, 2-4 unit, Condo, NW Condo, PUD", terms: "15/30/40yr Fixed, ARM, IO", reserves: "6-12mo by LTV and loan amt", ppp: "Inv only where allowed",
+        supported_doc_types: ["full_doc","1099","asset_depl","p_and_l","wvoe"],
+        expense_ratio_1099: "10%",
+        asset_formula: "Net assets / 60 months",
+        retirement_haircut: "70%"
       },
       foreign_natl: {
         max_ltv: 70, loan_min: 150000, loan_max: 2000000, min_fico_fn: null, max_dti: "N/A (DSCR)", us_credit_required: false, passport_required: true, visa_types: "Any", occupancy: ["inv","second"], io_available: true, terms: "30yr Fixed, ARM", property_types_fn: "SFR, 2-4 unit, Condo", reserves: "12mo", ppp: "Where allowed"
@@ -882,6 +776,7 @@ const US_STATES = ["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","
 const PROPTYPE_LABELS = {sfr:'SFR',condo_w:'Condo',condo_nw:'NW Condo','2_4_unit':'2-4 Unit',pud:'PUD',condotel:'Condotel',mfg:'Mfg Home',mixed:'Mixed'};
 const OCC_LABELS = {oo:'OO',second:'2nd Home',inv:'Inv'};
 const DOC_LABELS = {full:'Full Doc',bank_stmt:'Bank Stmt',dscr:'DSCR','1099':'1099',asset:'Asset Depl'};
+const FULLDOC_DOCTYPE_LABELS = {full_doc:'Full Doc','1099':'1099',asset_depl:'Asset Depletion',p_and_l:'P&L Only',wvoe:'WVOE'};
 const CIT_LABELS = {us:'US Cit',perm_res:'Perm Res',non_perm:'Non-Perm',fn:'Foreign Natl',itin:'ITIN/DACA'};
 const TAB_LABELS = {};
 PRODUCT_TABS.forEach(t => { TAB_LABELS[t.key] = t.label; });
@@ -1130,6 +1025,9 @@ function renderCards() {
         guideline_link: p.guideline_url || (l.products.ces ? l.products.ces.guideline_url : null)
       };
     } else if (activeTab === 'full_doc') {
+      // Build supported doc types display
+      const sdt = p.supported_doc_types || ['full_doc'];
+      const sdtDisplay = sdt.map(d => FULLDOC_DOCTYPE_LABELS[d] || d).join(', ');
       vals = {
         max_ltv_display: p.max_ltv ? p.max_ltv + '%' : '<span class="check">Check</span>',
         min_fico_fd_display: p.min_fico_fd || s.min_fico || '<span class="check">Check</span>',
@@ -1137,47 +1035,14 @@ function renderCards() {
         max_dti: p.max_dti || '<span class="check">Check</span>',
         io_display: p.io_available === true ? 'Yes' : p.io_available === false ? 'No' : 'Verify',
         se_min_display: (p.se_min_years || '2') + ' yr min',
+        supported_doc_types_display: sdtDisplay,
         terms: p.terms || 'Verify',
         property_types_fd: p.property_types_fd || 'Verify',
         reserves: p.reserves || 'Verify',
         ppp: p.ppp || 'Verify',
-        occ_display: Array.isArray(p.occupancy) ? p.occupancy.map(o => OCC_LABELS[o]||o).join(' / ') : (p.occupancy || 'Verify'),
-        state_note: (s.excluded_states && s.excluded_states.length > 0) ? s.excluded_states.join(', ') : 'Check matrix',
-        citizenship: s.citizenship_types ? s.citizenship_types.map(c => CIT_LABELS[c]||c).join(', ') : 'Verify',
-        credit_event_display: s.credit_event_mo ? s.credit_event_mo + ' months' : 'Verify',
-        guideline_link: p.guideline_url || (l.products.ces ? l.products.ces.guideline_url : null)
-      };
-    } else if (activeTab === '1099') {
-      vals = {
-        max_ltv_display: p.max_ltv ? p.max_ltv + '%' : '<span class="check">Check</span>',
-        min_fico_1099_display: p.min_fico_1099 || s.min_fico || '<span class="check">Check</span>',
-        loan_range: loanRange,
-        max_dti: p.max_dti || '<span class="check">Check</span>',
-        expense_ratio_1099: p.expense_ratio_1099 || 'Verify',
-        io_display: p.io_available === true ? 'Yes' : p.io_available === false ? 'No' : 'Verify',
-        terms: p.terms || 'Verify',
-        property_types_1099: p.property_types_1099 || 'Verify',
-        reserves: p.reserves || 'Verify',
-        ppp: p.ppp || 'Verify',
-        se_min_display: (p.se_min_years || '2') + ' yr min',
-        occ_display: Array.isArray(p.occupancy) ? p.occupancy.map(o => OCC_LABELS[o]||o).join(' / ') : (p.occupancy || 'Verify'),
-        state_note: (s.excluded_states && s.excluded_states.length > 0) ? s.excluded_states.join(', ') : 'Check matrix',
-        citizenship: s.citizenship_types ? s.citizenship_types.map(c => CIT_LABELS[c]||c).join(', ') : 'Verify',
-        credit_event_display: s.credit_event_mo ? s.credit_event_mo + ' months' : 'Verify',
-        guideline_link: p.guideline_url || (l.products.ces ? l.products.ces.guideline_url : null)
-      };
-    } else if (activeTab === 'asset_depl') {
-      vals = {
-        max_ltv_display: p.max_ltv ? p.max_ltv + '%' : '<span class="check">Check</span>',
-        min_fico_ad_display: p.min_fico_ad || s.min_fico || '<span class="check">Check</span>',
-        loan_range: loanRange,
-        asset_formula: p.asset_formula || 'Verify',
-        retirement_haircut: p.retirement_haircut || 'Verify',
-        io_display: p.io_available === true ? 'Yes' : p.io_available === false ? 'No' : 'Verify',
-        terms: p.terms || 'Verify',
-        property_types_ad: p.property_types_ad || 'Verify',
-        reserves: p.reserves || 'Verify',
-        ppp: p.ppp || 'Verify',
+        expense_ratio_1099: p.expense_ratio_1099 || null,
+        asset_formula: p.asset_formula || null,
+        retirement_haircut: p.retirement_haircut || null,
         occ_display: Array.isArray(p.occupancy) ? p.occupancy.map(o => OCC_LABELS[o]||o).join(' / ') : (p.occupancy || 'Verify'),
         state_note: (s.excluded_states && s.excluded_states.length > 0) ? s.excluded_states.join(', ') : 'Check matrix',
         citizenship: s.citizenship_types ? s.citizenship_types.map(c => CIT_LABELS[c]||c).join(', ') : 'Verify',
@@ -1268,6 +1133,8 @@ function renderCards() {
     if (cardConfig && cardConfig.detailRows) {
       html += '<div class="card-details">';
       cardConfig.detailRows.forEach(dr => {
+        // Skip conditional rows when the value is null/empty
+        if (dr.conditional && !vals[dr.key]) return;
         if (dr.isLink) {
           if (vals[dr.key]) {
             html += '<div class="detail-row"><span class="dlabel">' + dr.label + '</span><span class="dvalue"><a href="' + vals[dr.key] + '" target="_blank" style="color:var(--accent)">View</a></span></div>';
@@ -1317,6 +1184,7 @@ function updateHeader() {
   const pt = (document.getElementById('f-proptype')||{}).value;
   const occ = (document.getElementById('f-occupancy')||{}).value;
   const doc = (document.getElementById('f-doctype')||{}).value;
+  const fdDocType = (document.getElementById('f-fulldoc-doctype')||{}).value;
   const cit = (document.getElementById('f-citizenship')||{}).value;
   const dscrR = (document.getElementById('f-dscr-ratio')||{}).value;
 
@@ -1331,6 +1199,7 @@ function updateHeader() {
   if (pt) parts.push(PROPTYPE_LABELS[pt] || pt);
   if (occ) parts.push(OCC_LABELS[occ] || occ);
   if (doc) parts.push(DOC_LABELS[doc] || doc);
+  if (fdDocType) parts.push(FULLDOC_DOCTYPE_LABELS[fdDocType] || fdDocType);
   if (cit) parts.push(CIT_LABELS[cit] || cit);
   if (dscrR) parts.push('DSCR ' + dscrR);
 
@@ -1345,7 +1214,7 @@ function updateHeader() {
 }
 
 // ============================================================
-// APPLY FILTERS (CES-specific logic preserved exactly)
+// APPLY FILTERS
 // ============================================================
 function applyFilters() {
   updateHeader();
@@ -1359,10 +1228,6 @@ function applyFilters() {
     applyBankStmtFilters();
   } else if (activeTab === 'full_doc') {
     applyFullDocFilters();
-  } else if (activeTab === '1099') {
-    apply1099Filters();
-  } else if (activeTab === 'asset_depl') {
-    applyAssetDeplFilters();
   } else if (activeTab === 'foreign_natl') {
     applyForeignNatlFilters();
   } else {
@@ -1808,6 +1673,7 @@ function applyFullDocFilters() {
   const state = (document.getElementById('f-state')||{}).value || '';
   const propType = (document.getElementById('f-proptype')||{}).value || '';
   const occupancy = (document.getElementById('f-occupancy')||{}).value || '';
+  const fdDocType = (document.getElementById('f-fulldoc-doctype')||{}).value || '';
   const citizenship = (document.getElementById('f-citizenship')||{}).value || '';
   const creditEvent = parseInt((document.getElementById('f-creditevent')||{}).value) || null;
   const se1yr = (document.getElementById('f-se')||{}).value === '1';
@@ -1824,6 +1690,12 @@ function applyFullDocFilters() {
     const p = l.products.full_doc;
     const s = l.shared;
     let show = true;
+
+    // Doc type filter (new: filters by supported_doc_types)
+    if (fdDocType && show) {
+      const sdt = p.supported_doc_types || ['full_doc'];
+      if (!sdt.includes(fdDocType)) show = false;
+    }
 
     // FICO
     if (fico && show) {
@@ -1878,238 +1750,6 @@ function applyFullDocFilters() {
     // Self-employment 1yr
     if (se1yr && show) {
       if (p.se_min_years && p.se_min_years > 1) show = false;
-    }
-
-    // IO
-    if (ioReq && show) {
-      if (p.io_available === false) show = false;
-    }
-
-    // Entity
-    if (entityReq && show) {
-      if (s.entity_ok !== true) show = false;
-    }
-
-    // Loan amount
-    if (loanAmt && show) {
-      if (p.loan_min && loanAmt < p.loan_min) show = false;
-      if (p.loan_max && loanAmt > p.loan_max) show = false;
-    }
-
-    results.push({ idx: globalIdx, show: show, maxLtv: p.max_ltv || 0 });
-  });
-
-  // Sort by max_ltv (highest first)
-  results.sort((a, b) => b.maxLtv - a.maxLtv);
-
-  // Reorder DOM and show/hide
-  const grid = document.getElementById('lender-grid');
-  let count = 0;
-  results.forEach(r => {
-    const card = grid.querySelector('[data-idx="' + r.idx + '"]');
-    if (!card) return;
-    card.classList.toggle('hidden', !r.show);
-    if (r.show) count++;
-    grid.appendChild(card);
-  });
-
-  document.getElementById('match-count').textContent = count;
-  const existing = document.querySelector('.no-results');
-  if (existing) existing.remove();
-  if (count === 0) {
-    const msg = document.createElement('div');
-    msg.className = 'no-results';
-    msg.innerHTML = '<h3>No lenders match</h3><p>Try relaxing your filters or reset.</p>';
-    grid.appendChild(msg);
-  }
-}
-
-function apply1099Filters() {
-  const loanAmt = parseNum((document.getElementById('f-loanamt')||{}).value) || null;
-  const fico = parseInt((document.getElementById('f-fico')||{}).value) || null;
-  const state = (document.getElementById('f-state')||{}).value || '';
-  const propType = (document.getElementById('f-proptype')||{}).value || '';
-  const occupancy = (document.getElementById('f-occupancy')||{}).value || '';
-  const citizenship = (document.getElementById('f-citizenship')||{}).value || '';
-  const creditEvent = parseInt((document.getElementById('f-creditevent')||{}).value) || null;
-  const ioReq = (document.getElementById('f-io')||{}).value === 'yes';
-  const entityReq = (document.getElementById('f-entity')||{}).value === 'yes';
-
-  const cards = document.querySelectorAll('.lender-card');
-  let results = [];
-
-  cards.forEach(card => {
-    const globalIdx = parseInt(card.dataset.idx);
-    const l = LENDERS[globalIdx];
-    if (!l.product_keys.includes('1099')) return;
-    const p = l.products['1099'];
-    const s = l.shared;
-    let show = true;
-
-    // FICO
-    if (fico && show) {
-      const minFico = p.min_fico_1099 || s.min_fico;
-      if (minFico && fico < minFico) show = false;
-    }
-
-    // State filter
-    if (state && show) {
-      const prodExcl = p.excluded_states || [];
-      const sharedExcl = s.excluded_states || [];
-      const allExcl = [...new Set([...prodExcl, ...sharedExcl])];
-      if (allExcl.includes(state)) show = false;
-      const et = document.getElementById('excl-' + globalIdx);
-      const condStates = s.excluded_states_conditional || {};
-      if (condStates[state] && show) {
-        const cond = condStates[state];
-        const cl = cond.toLowerCase();
-        if ((occupancy === 'oo' && (cl.includes('owner-occupied') || cl.includes('no oo') || cl.includes('oo/2nd home not eligible') || cl.includes('oo not eligible'))) ||
-            (occupancy === 'second' && (cl.includes('2nd home not eligible') || cl.includes('oo/2nd home not eligible'))) ||
-            (occupancy === 'inv' && (cl.includes('no inv') || cl.includes('investment not eligible') || cl.includes('inv not eligible')))) {
-          show = false;
-        } else {
-          et.textContent = '\u26A0 ' + state + ': ' + cond;
-          et.classList.add('visible');
-        }
-      } else if (et) {
-        et.classList.remove('visible');
-      }
-    }
-
-    // Property type
-    if (propType && show) {
-      if (s.property_types.length > 0 && !s.property_types.includes(propType)) show = false;
-    }
-
-    // Occupancy
-    if (occupancy && show) {
-      if (Array.isArray(p.occupancy) && !p.occupancy.includes(occupancy)) show = false;
-    }
-
-    // Citizenship
-    if (citizenship && show) {
-      if (s.citizenship_types.length > 0 && !s.citizenship_types.includes(citizenship)) show = false;
-    }
-
-    // Credit event seasoning
-    if (creditEvent && show) {
-      if (s.credit_event_mo !== null && s.credit_event_mo > creditEvent) show = false;
-    }
-
-    // IO
-    if (ioReq && show) {
-      if (p.io_available === false) show = false;
-    }
-
-    // Entity
-    if (entityReq && show) {
-      if (s.entity_ok !== true) show = false;
-    }
-
-    // Loan amount
-    if (loanAmt && show) {
-      if (p.loan_min && loanAmt < p.loan_min) show = false;
-      if (p.loan_max && loanAmt > p.loan_max) show = false;
-    }
-
-    results.push({ idx: globalIdx, show: show, maxLtv: p.max_ltv || 0 });
-  });
-
-  // Sort by max_ltv (highest first)
-  results.sort((a, b) => b.maxLtv - a.maxLtv);
-
-  // Reorder DOM and show/hide
-  const grid = document.getElementById('lender-grid');
-  let count = 0;
-  results.forEach(r => {
-    const card = grid.querySelector('[data-idx="' + r.idx + '"]');
-    if (!card) return;
-    card.classList.toggle('hidden', !r.show);
-    if (r.show) count++;
-    grid.appendChild(card);
-  });
-
-  document.getElementById('match-count').textContent = count;
-  const existing = document.querySelector('.no-results');
-  if (existing) existing.remove();
-  if (count === 0) {
-    const msg = document.createElement('div');
-    msg.className = 'no-results';
-    msg.innerHTML = '<h3>No lenders match</h3><p>Try relaxing your filters or reset.</p>';
-    grid.appendChild(msg);
-  }
-}
-
-function applyAssetDeplFilters() {
-  const loanAmt = parseNum((document.getElementById('f-loanamt')||{}).value) || null;
-  const fico = parseInt((document.getElementById('f-fico')||{}).value) || null;
-  const state = (document.getElementById('f-state')||{}).value || '';
-  const propType = (document.getElementById('f-proptype')||{}).value || '';
-  const occupancy = (document.getElementById('f-occupancy')||{}).value || '';
-  const citizenship = (document.getElementById('f-citizenship')||{}).value || '';
-  const creditEvent = parseInt((document.getElementById('f-creditevent')||{}).value) || null;
-  const ioReq = (document.getElementById('f-io')||{}).value === 'yes';
-  const entityReq = (document.getElementById('f-entity')||{}).value === 'yes';
-
-  const cards = document.querySelectorAll('.lender-card');
-  let results = [];
-
-  cards.forEach(card => {
-    const globalIdx = parseInt(card.dataset.idx);
-    const l = LENDERS[globalIdx];
-    if (!l.product_keys.includes('asset_depl')) return;
-    const p = l.products.asset_depl;
-    const s = l.shared;
-    let show = true;
-
-    // FICO
-    if (fico && show) {
-      const minFico = p.min_fico_ad || s.min_fico;
-      if (minFico && fico < minFico) show = false;
-    }
-
-    // State filter
-    if (state && show) {
-      const prodExcl = p.excluded_states || [];
-      const sharedExcl = s.excluded_states || [];
-      const allExcl = [...new Set([...prodExcl, ...sharedExcl])];
-      if (allExcl.includes(state)) show = false;
-      const et = document.getElementById('excl-' + globalIdx);
-      const condStates = s.excluded_states_conditional || {};
-      if (condStates[state] && show) {
-        const cond = condStates[state];
-        const cl = cond.toLowerCase();
-        if ((occupancy === 'oo' && (cl.includes('owner-occupied') || cl.includes('no oo') || cl.includes('oo/2nd home not eligible') || cl.includes('oo not eligible'))) ||
-            (occupancy === 'second' && (cl.includes('2nd home not eligible') || cl.includes('oo/2nd home not eligible'))) ||
-            (occupancy === 'inv' && (cl.includes('no inv') || cl.includes('investment not eligible') || cl.includes('inv not eligible')))) {
-          show = false;
-        } else {
-          et.textContent = '\u26A0 ' + state + ': ' + cond;
-          et.classList.add('visible');
-        }
-      } else if (et) {
-        et.classList.remove('visible');
-      }
-    }
-
-    // Property type
-    if (propType && show) {
-      if (s.property_types.length > 0 && !s.property_types.includes(propType)) show = false;
-    }
-
-    // Occupancy
-    if (occupancy && show) {
-      if (Array.isArray(p.occupancy) && !p.occupancy.includes(occupancy)) show = false;
-    }
-
-    // Citizenship
-    if (citizenship && show) {
-      if (s.citizenship_types.length > 0 && !s.citizenship_types.includes(citizenship)) show = false;
-    }
-
-    // Credit event seasoning
-    if (creditEvent && show) {
-      if (s.credit_event_mo !== null && s.credit_event_mo > creditEvent) show = false;
     }
 
     // IO
@@ -2259,6 +1899,7 @@ function copyScenario() {
   const pt = (document.getElementById('f-proptype')||{}).value;
   const occ = (document.getElementById('f-occupancy')||{}).value;
   const doc = (document.getElementById('f-doctype')||{}).value;
+  const fdDocType = (document.getElementById('f-fulldoc-doctype')||{}).value;
   const cit = (document.getElementById('f-citizenship')||{}).value;
   const dscrR = (document.getElementById('f-dscr-ratio')||{}).value;
 
@@ -2272,6 +1913,7 @@ function copyScenario() {
   if (pt) details.push(PROPTYPE_LABELS[pt] || pt);
   if (occ) details.push(OCC_LABELS[occ] || occ);
   if (doc) details.push(DOC_LABELS[doc] || doc);
+  if (fdDocType) details.push(FULLDOC_DOCTYPE_LABELS[fdDocType] || fdDocType);
   if (cit) details.push(CIT_LABELS[cit] || cit);
   if (dscrR) details.push('DSCR: ' + dscrR);
   if (details.length) text += details.join(' | ') + '\n';
@@ -2306,11 +1948,9 @@ function copyScenario() {
 const PARAM_MAP_CES = { pv: 'f-propval', mtg: 'f-firstmtg', fico: 'f-fico', st: 'f-state', pt: 'f-proptype', occ: 'f-occupancy', doc: 'f-doctype', cit: 'f-citizenship', io: 'f-io', se: 'f-se', ce: 'f-creditevent', lates: 'f-lates', ft: 'f-firsttype', ent: 'f-entity' };
 const PARAM_MAP_DSCR = { pv: 'f-propval', loan: 'f-loanamt', fico: 'f-fico', st: 'f-state', pt: 'f-proptype', dscr: 'f-dscr-ratio', cit: 'f-citizenship', ce: 'f-creditevent', str: 'f-str', io: 'f-io', ent: 'f-entity' };
 const PARAM_MAP_BS = { loan: 'f-loanamt', fico: 'f-fico', st: 'f-state', pt: 'f-proptype', occ: 'f-occupancy', stype: 'f-stmt-type', cit: 'f-citizenship', ce: 'f-creditevent', sey: 'f-se-years', io: 'f-io', ent: 'f-entity' };
-const PARAM_MAP_FD = { loan: 'f-loanamt', fico: 'f-fico', st: 'f-state', pt: 'f-proptype', occ: 'f-occupancy', cit: 'f-citizenship', ce: 'f-creditevent', se: 'f-se', io: 'f-io', ent: 'f-entity' };
-const PARAM_MAP_1099 = { loan: 'f-loanamt', fico: 'f-fico', st: 'f-state', pt: 'f-proptype', occ: 'f-occupancy', cit: 'f-citizenship', ce: 'f-creditevent', io: 'f-io', ent: 'f-entity' };
-const PARAM_MAP_AD = { loan: 'f-loanamt', fico: 'f-fico', st: 'f-state', pt: 'f-proptype', occ: 'f-occupancy', cit: 'f-citizenship', ce: 'f-creditevent', io: 'f-io', ent: 'f-entity' };
+const PARAM_MAP_FD = { loan: 'f-loanamt', fico: 'f-fico', st: 'f-state', pt: 'f-proptype', occ: 'f-occupancy', dtype: 'f-fulldoc-doctype', cit: 'f-citizenship', ce: 'f-creditevent', se: 'f-se', io: 'f-io', ent: 'f-entity' };
 const PARAM_MAP_FN = { loan: 'f-loanamt', st: 'f-state', pt: 'f-proptype', occ: 'f-occupancy' };
-function getParamMap() { if (activeTab === 'dscr') return PARAM_MAP_DSCR; if (activeTab === 'bank_stmt') return PARAM_MAP_BS; if (activeTab === 'full_doc') return PARAM_MAP_FD; if (activeTab === '1099') return PARAM_MAP_1099; if (activeTab === 'asset_depl') return PARAM_MAP_AD; if (activeTab === 'foreign_natl') return PARAM_MAP_FN; return PARAM_MAP_CES; }
+function getParamMap() { if (activeTab === 'dscr') return PARAM_MAP_DSCR; if (activeTab === 'bank_stmt') return PARAM_MAP_BS; if (activeTab === 'full_doc') return PARAM_MAP_FD; if (activeTab === 'foreign_natl') return PARAM_MAP_FN; return PARAM_MAP_CES; }
 
 function updateURL() {
   const params = new URLSearchParams();
