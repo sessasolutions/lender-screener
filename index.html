@@ -1605,6 +1605,7 @@ function applyDscrFilters() {
 
 function applyBankStmtFilters() {
   const loanAmt = parseNum((document.getElementById('f-loanamt')||{}).value) || null;
+  const propVal = parseNum((document.getElementById('f-propval')||{}).value) || null;
   const fico = parseInt((document.getElementById('f-fico')||{}).value) || null;
   const state = (document.getElementById('f-state')||{}).value || '';
   const propType = (document.getElementById('f-proptype')||{}).value || '';
@@ -1703,6 +1704,12 @@ function applyBankStmtFilters() {
       if (p.loan_min && loanAmt < p.loan_min) show = false;
       if (p.loan_max && loanAmt > p.loan_max) show = false;
     }
+    // LTV check from Property Value + Loan Amount
+    if (propVal && loanAmt && show) {
+      const ltv = (loanAmt / propVal) * 100;
+      const maxLtv = p.max_ltv || 90;
+      if (ltv > maxLtv) show = false;
+    }
 
     results.push({ idx: globalIdx, show: show, maxLtv: p.max_ltv || 0 });
   });
@@ -1734,6 +1741,7 @@ function applyBankStmtFilters() {
 
 function applyFullDocFilters() {
   const loanAmt = parseNum((document.getElementById('f-loanamt')||{}).value) || null;
+  const propVal = parseNum((document.getElementById('f-propval')||{}).value) || null;
   const fico = parseInt((document.getElementById('f-fico')||{}).value) || null;
   const state = (document.getElementById('f-state')||{}).value || '';
   const propType = (document.getElementById('f-proptype')||{}).value || '';
@@ -1832,6 +1840,12 @@ function applyFullDocFilters() {
       if (p.loan_min && loanAmt < p.loan_min) show = false;
       if (p.loan_max && loanAmt > p.loan_max) show = false;
     }
+    // LTV check from Property Value + Loan Amount
+    if (propVal && loanAmt && show) {
+      const ltv = (loanAmt / propVal) * 100;
+      const maxLtv = p.max_ltv || 90;
+      if (ltv > maxLtv) show = false;
+    }
 
     results.push({ idx: globalIdx, show: show, maxLtv: p.max_ltv || 0 });
   });
@@ -1863,6 +1877,7 @@ function applyFullDocFilters() {
 
 function applyForeignNatlFilters() {
   const loanAmt = parseNum((document.getElementById('f-loanamt')||{}).value) || null;
+  const propVal = parseNum((document.getElementById('f-propval')||{}).value) || null;
   const state = (document.getElementById('f-state')||{}).value || '';
   const propType = (document.getElementById('f-proptype')||{}).value || '';
   const occupancy = (document.getElementById('f-occupancy')||{}).value || '';
@@ -1916,6 +1931,12 @@ function applyForeignNatlFilters() {
     if (loanAmt && show) {
       if (p.loan_min && loanAmt < p.loan_min) show = false;
       if (p.loan_max && loanAmt > p.loan_max) show = false;
+    }
+    // LTV check from Property Value + Loan Amount
+    if (propVal && loanAmt && show) {
+      const ltv = (loanAmt / propVal) * 100;
+      const maxLtv = p.max_ltv || 90;
+      if (ltv > maxLtv) show = false;
     }
 
     results.push({ idx: globalIdx, show: show, maxLtv: p.max_ltv || 0 });
